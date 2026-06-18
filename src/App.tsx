@@ -872,7 +872,8 @@ function Field({ field, selected, onToggle, onHoverToken, colorTheme }: FieldPro
   
   const isSel = (v: string) => {
     if (field.multi) {
-      return (selected as string[] || []).includes(v);
+      const arr = Array.isArray(selected) ? selected : (selected ? [selected] : []);
+      return arr.includes(v);
     }
     return selected === v;
   };
@@ -1509,7 +1510,7 @@ export default function App() {
     setSel(prev => {
       const cur = prev[field.key];
       if (field.multi) {
-        const arr = (cur as string[]) || [];
+        const arr = Array.isArray(cur) ? cur : (cur ? [cur] : []);
         return { 
           ...prev, 
           [field.key]: arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v] 
