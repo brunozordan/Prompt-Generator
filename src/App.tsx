@@ -1097,12 +1097,19 @@ CRITICAL TECHNIQUE RULES:
 2. You must make sure that "detected_tokens" maps to exact items available in the UI schema specified in JSON SCHEMA EXPECTED. For instance, do not output imaginary tokens.`;
 
 const callGeminiDirectly = async (apiKey: string, prompt: string, systemInstruction?: string, temperature = 0.7) => {
-  const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+  const modelAndVersions = [
+    { model: "gemini-2.5-flash", ver: "v1" },
+    { model: "gemini-2.5-flash", ver: "v1beta" },
+    { model: "gemini-1.5-flash", ver: "v1" },
+    { model: "gemini-1.5-flash", ver: "v1beta" },
+    { model: "gemini-1.5-flash-latest", ver: "v1" },
+    { model: "gemini-1.5-flash-latest", ver: "v1beta" }
+  ];
   let lastError: any = null;
 
-  for (const model of models) {
+  for (const item of modelAndVersions) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/${item.ver}/models/${item.model}:generateContent?key=${apiKey}`;
       const payload: any = {
         contents: [
           {
@@ -1140,7 +1147,7 @@ const callGeminiDirectly = async (apiKey: string, prompt: string, systemInstruct
       throw new Error("Empty content parts in direct Google API response.");
     } catch (e) {
       lastError = e;
-      console.warn(`Direct client call with model ${model} failed:`, e);
+      console.warn(`Direct client call with model ${item.model} on ${item.ver} failed:`, e);
     }
   }
   throw lastError || new Error("Failed to contact Gemini API directly.");
@@ -1158,12 +1165,19 @@ const deconstructDirectly = async (apiKey: string, base64Data: string, systemIns
     }
   }
 
-  const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+  const modelAndVersions = [
+    { model: "gemini-2.5-flash", ver: "v1" },
+    { model: "gemini-2.5-flash", ver: "v1beta" },
+    { model: "gemini-1.5-flash", ver: "v1" },
+    { model: "gemini-1.5-flash", ver: "v1beta" },
+    { model: "gemini-1.5-flash-latest", ver: "v1" },
+    { model: "gemini-1.5-flash-latest", ver: "v1beta" }
+  ];
   let lastError: any = null;
 
-  for (const model of models) {
+  for (const item of modelAndVersions) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/${item.ver}/models/${item.model}:generateContent?key=${apiKey}`;
       const payload = {
         contents: [
           {
@@ -1208,7 +1222,7 @@ const deconstructDirectly = async (apiKey: string, base64Data: string, systemIns
       throw new Error("Empty deconstruct output.");
     } catch (e) {
       lastError = e;
-      console.warn(`Direct deconstruct call with model ${model} failed:`, e);
+      console.warn(`Direct deconstruct call with model ${item.model} on ${item.ver} failed:`, e);
     }
   }
   throw lastError || new Error("Failed to contact Gemini API directly for image deconstruction.");
