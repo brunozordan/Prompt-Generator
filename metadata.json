@@ -1,0 +1,8 @@
+{
+  "name": "Prompt Studio v6",
+  "description": "A high-performance prompt engineering workstation and interactive sandbox for testing Gemini models with real-time execution telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
