@@ -1010,6 +1010,210 @@ interface SavedPrompt {
   elements?: any[];
 }
 
+const deconstructSystemInstructionClient = `You are an expert Computer Vision agent, Creative Lens Archivist, and senior AI Prompt Reverse-Engineer. Your job is to analyze the provided image, identify its primary subject matter, determine its artistic/recording medium, and decode its exact technical properties.
+
+You must output a highly detailed, professional analysis of the image matching BOTH a mapped set of UI tokens, AND a beautiful rich teardown of creative factors.
+
+Return your analysis STRICTLY as a single, valid JSON object matching the exact schema below. Do not put any formatting, markdown wrappers, prefaces, or postfaces.
+
+JSON SCHEMA EXPECTED:
+{
+  "ui_mapping": {
+    "subject": "A vivid 1-2 sentence descriptive prose of the foreground focus, subjects, physical actions, and environment settings. Be highly concrete.",
+    "technique": "Photography" | "Illustration" | "3D" | "Mixed media",
+    "detected_tokens": {
+      "Camera angle": "Must be exactly one of: \\"Eye level\\", \\"Low angle\\", \\"High angle\\", \\"Worm\'s eye\\", \\"Bird\'s eye / overhead\\", \\"Dutch angle\\", \\"Over-the-shoulder\\", \\"POV\\", \\"Three-quarter\\", \\"Profile\\"",
+      "Shot size": "Must be exactly one of: \\"Extreme close-up\\", \\"Close-up\\", \\"Medium close-up\\", \\"Medium shot\\", \\"Cowboy shot\\", \\"Full body\\", \\"Wide shot\\", \\"Extreme wide\\", \\"Macro\\"",
+      "Lighting": "Must be exactly one of: \\"Rembrandt\\", \\"Butterfly\\", \\"Loop\\", \\"Split\\", \\"Broad\\", \\"Short\\", \\"Flat / high-key\\", \\"Soft / diffused\\", \\"Hard light\\", \\"Studio softbox\\", \\"Rim / edge\\", \\"Backlight\\", \\"Key light\\", \\"Fill light\\", \\"Ring light\\", \\"Natural window\\", \\"Top light\\", \\"Cross lighting\\", \\"Bounced\\", \\"Beauty dish\\", \\"Fresnel / spot\\", \\"Snoot\\", \\"Gobo / patterned\\", \\"Umbrella\\", \\"Color gels\\", \\"Duo-tone\\", \\"Light painting\\", \\"Golden hour\\", \\"Blue hour\\", \\"Overcast\\", \\"Harsh midday\\", \\"Neon / night\\", \\"Volumetric / god rays\\", \\"Chiaroscuro\\", \\"High-key\\", \\"Low-key\\", \\"Candlelight\\", \\"Firelight\\", \\"Lens flares\\", \\"String / fairy lights\\", \\"Bioluminescence\\", \\"Fluorescent\\", \\"Tungsten / warm\\", \\"Concert / stage\\", \\"Soft glow\\"",
+      "Shadow": ["Select 1-2 matching shadow descriptors from: \\"Soft shadows\\", \\"Hard-edged shadows\\", \\"Dappled shadows\\", \\"Gobo shadows\\", \\"Cinematic split shadows\\", \\"Chiaroscuro\\", \\"Long casting shadows\\", \\"Penumbra shadows\\", \\"Ambient occlusion\\", \\"Contour shadows\\", \\"Opaque dense shadows\\", \\"Filtered shadows\\", \\"Dramatic high-contrast\\", \\"Silhouette shadows\\", \\"Backlit\\", \\"Colorful shadows\\", \\"Gradient shadows\\", \\"Abstract patterns\\", \\"Geometric shadows\\", \\"Hatched shadows\\", \\"Shadow play\\", \\"Layered shadows\\", \\"Projected shadows\\", \\"Negative space shadows\\", \\"Reflective shadows\\", \\"Mirrored shadows\\", \\"Double exposure\\", \\"Infrared shadows\\", \\"Motion blur shadows\\", \\"Radiant shadows\\", \\"Intersecting shadows\\", \\"Dispersed shadows\\", \\"Textured shadows\\", \\"Volumetric shadows\\", \\"Directional shadows\\", \\"Negative light shadows\\""],
+      "Color grade": "Must be exactly one of: \\"Teal & orange\\", \\"Bleach bypass\\", \\"Cross-process\\", \\"Muted / earthy\\", \\"Technicolor\\", \\"Warm nostalgic\\", \\"Cool / cold\\", \\"Green dystopian\\", \\"Monochrome\\", \\"Pastel / soft\\", \\"High saturation\\", \\"B&W high-contrast\\", \\"Sepia\\"",
+      "Contrast & tone": "Must be exactly one of: \\"High contrast\\", \\"Balanced\\", \\"Low contrast / soft\\", \\"Faded / matte (lifted blacks)\\", \\"Flat / lifted shadows\\", \\"Crushed blacks\\", \\"Hazy / misty\\"",
+      "Focus & blur": "Must be exactly one of: \\"Sharp throughout\\", \\"Shallow depth of field\\", \\"Soft focus\\", \\"Gaussian blur\\", \\"Bokeh background\\", \\"Tilt-shift (miniature)\\", \\"Lens blur\\", \\"Defocused background\\", \\"Motion blur\\", \\"Camera shake\\", \\"Long exposure\\", \\"Light trails / streaking\\", \\"Slow shutter\\", \\"Radial / zoom blur\\", \\"Double exposure\\""
+    }
+  },
+  "detailed_teardown": {
+    "metadata": {
+      "dimensions_px": { "width": 1000, "height": 1250 },
+      "aspect_ratio": "e.g. 4:5, 1:1, 16:9",
+      "style": "Highly specific style keywords (e.g. \\"stylized digital art, vaporwave illustration, flat vector vector, photorealistic cinematic film\\")",
+      "mood": "e.g. \\"contemplative, creative, tense, retro-futural, melancholic\\""
+    },
+    "color_palette": {
+      "dominant_colors_hex": ["#D9A2B1", "#A3C6D6"],
+      "accent_colors_hex": ["#FF4848"],
+      "gradients": "Description of any color shifts/transitions in background"
+    },
+    "lighting": {
+      "type": "Highly specific description of lighting type",
+      "shadows": "Precise description of shadow behaviors",
+      "contrast": "Detailed contrast notes",
+      "ambient_light": "Color reflections from signs/mood light"
+    },
+    "composition": {
+      "technique_used": "e.g. extreme low-angle perspective, leading lines, rule of thirds, forced perspective",
+      "depth_layers": "e.g. foreground elements, midground subject, background sky",
+      "focal_point": "Detailed description of focal focus"
+    },
+    "camera_details": {
+      "focal_length_mm": "Estimated focal length or rendering viewport lens",
+      "aperture_effect": "Aperture style/depth of field behavior",
+      "angle": "Precise viewport angle",
+      "distance_to_subject": "e.g. close-up, wide-angle torso shift"
+    },
+    "subjects": [
+      {
+        "type": "person/object/animal",
+        "description": "Exceedingly precise description of the subject including physical actions, attributes, clothes details, pose, age, facial features (beard, glasses, hair color, expression)",
+        "position_in_frame": "Spatial bounds"
+      }
+    ],
+    "background_details": {
+      "environment_type": "Surrounding setting details",
+      "text_elements_present": "Specific text visible (e.g. \'THINK CREATE\' written on signs)",
+      "distraction_level": "e.g. minimal, complex layered skyscrapers"
+    },
+    "post_processing_effects": {
+      "applied": ["digital canvas texture overlay", "glow bloom effect", "color grading", "film grain"],
+      "overall_color_grade": "e.g. synthwave/vaporwave grading dominated by pastel pinks, purples, and blues"
+    },
+    "micro_details": [
+      "Detail 1",
+      "Detail 2",
+      "Detail 3"
+    ],
+    "suggested_ai_prompts": {
+      "midjourney_prompt": "Beautiful premium prompt for Midjourney v6",
+      "dalle_prompt": "Highly detailed descriptive prompt for DALL-E 3",
+      "stable_diffusion_prompt": "High-fidelity tag/prose prompt for SDXL/Stable Diffusion 3"
+    }
+  }
+}
+
+CRITICAL TECHNIQUE RULES:
+1. Examine the image content carefully to decide technique.
+   - If the image looks drawn, inked, vaporwave, pastel graphic, manga, watercolor, illustration paint, sketch, or digital cartoon painting, set technique strictly to "Illustration" or "Mixed media". Highly stylized pastel drawings with custom gradients are DEFINITELY "Illustration", NOT Photography! 
+   - If the image contains photorealistic details, realistic lens bokeh highlights, natural motion blur, authentic steam/water condensation/rain drops, real human face details or organic textures, set technique strictly to "Photography".
+   - If the image is a synthetic 3D viewport, matte clay render, smooth CAD scene modeling, or procedural non-subsurface material, set technique strictly to "3D".
+2. You must make sure that "detected_tokens" maps to exact items available in the UI schema specified in JSON SCHEMA EXPECTED. For instance, do not output imaginary tokens.`;
+
+const callGeminiDirectly = async (apiKey: string, prompt: string, systemInstruction?: string, temperature = 0.7) => {
+  const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+  let lastError: any = null;
+
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const payload: any = {
+        contents: [
+          {
+            parts: [{ text: prompt }]
+          }
+        ],
+        generationConfig: {
+          temperature: temperature,
+          responseMimeType: "application/json"
+        }
+      };
+
+      if (systemInstruction) {
+        payload.systemInstruction = {
+          parts: [{ text: systemInstruction }]
+        };
+      }
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Google API status ${res.status}: ${errText}`);
+      }
+
+      const resData = await res.json();
+      const contentText = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (contentText) {
+        return contentText;
+      }
+      throw new Error("Empty content parts in direct Google API response.");
+    } catch (e) {
+      lastError = e;
+      console.warn(`Direct client call with model ${model} failed:`, e);
+    }
+  }
+  throw lastError || new Error("Failed to contact Gemini API directly.");
+};
+
+const deconstructDirectly = async (apiKey: string, base64Data: string, systemInstructionClient: string) => {
+  let rawBase64 = base64Data;
+  let mimeType = 'image/jpeg';
+  if (base64Data.includes(';base64,')) {
+    const parts = base64Data.split(';base64,');
+    rawBase64 = parts[1];
+    const mimeMatches = parts[0].match(/data:(.*?)$/);
+    if (mimeMatches && mimeMatches[1]) {
+      mimeType = mimeMatches[1];
+    }
+  }
+
+  const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+  let lastError: any = null;
+
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const payload = {
+        contents: [
+          {
+            parts: [
+              {
+                inlineData: {
+                  mimeType: mimeType,
+                  data: rawBase64
+                }
+              },
+              {
+                text: "Analyze and deconstruct this reference image with maximum visual accuracy. Return the output STRICTLY matching the expected schema with 'ui_mapping' and 'detailed_teardown' fields, with no prefaces or markdown blocks."
+              }
+            ]
+          }
+        ],
+        systemInstruction: {
+          parts: [{ text: systemInstructionClient }]
+        },
+        generationConfig: {
+          temperature: 0.1,
+          responseMimeType: "application/json"
+        }
+      };
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Google API status ${res.status}: ${errText}`);
+      }
+
+      const resData = await res.json();
+      const contentText = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (contentText) {
+        return contentText;
+      }
+      throw new Error("Empty deconstruct output.");
+    } catch (e) {
+      lastError = e;
+      console.warn(`Direct deconstruct call with model ${model} failed:`, e);
+    }
+  }
+  throw lastError || new Error("Failed to contact Gemini API directly for image deconstruction.");
+};
+
 // ==========================================
 // MAIN APPLICATION COMPONENT
 // ==========================================
@@ -1464,6 +1668,7 @@ Because "Cinematic Prompt Expansion" is disabled, output a simpler, streamlined,
     let response: Response | null = null;
     let text = "";
     let data: any = null;
+    let fallbackToDirectClient = false;
 
     try {
       while (attempt < maxAttempts) {
@@ -1483,7 +1688,8 @@ Because "Cinematic Prompt Expansion" is disabled, output a simpler, streamlined,
           text = await response.text();
 
           if (text.trim().toLowerCase().startsWith('<!doctype') || text.trim().toLowerCase().startsWith('<html')) {
-            throw new Error("Received an HTML response instead of JSON. The server could be warming up, restarting, or misconfigured.");
+            fallbackToDirectClient = true;
+            break;
           }
 
           try {
@@ -1519,7 +1725,19 @@ Because "Cinematic Prompt Expansion" is disabled, output a simpler, streamlined,
               continue;
             }
           }
-          throw errLoop;
+          // On other fetch/network errors (especially direct connection failures or absolute target missing on Netlify), trigger fallback
+          fallbackToDirectClient = true;
+          break;
+        }
+      }
+
+      if (fallbackToDirectClient) {
+        if (userApiKey && userApiKey.trim() !== '') {
+          console.log("Static hosting (Netlify) or backend error detected. Direct client-side Gemini generation routing activated.");
+          const directResult = await callGeminiDirectly(userApiKey.trim(), promptPayload);
+          data = { status: 'success', text: directResult };
+        } else {
+          throw new Error("Static Host (Netlify) Detected: This browser-based app is currently hosted on a static server without an active backend. To use 'Enhance with AI' here, please paste your free Google AI Studio API key by clicking '[✨ Enhance with AI]' to configure your browser interface.");
         }
       }
 
@@ -1545,7 +1763,11 @@ Because "Cinematic Prompt Expansion" is disabled, output a simpler, streamlined,
         setErr((data && data.message) || "An error occurred during Gemini prompt compilation.");
       }
     } catch (e: any) {
-      setErr(e.message || "Compilation failed. Check that GEMINI_API_KEY environment credentials exist in the workspace.");
+      if (e.message && e.message.includes("Static Host")) {
+        setErr(e.message);
+      } else {
+        setErr(`${e.message || "Compilation failed."} Please check that your Gemini API key is valid.`);
+      }
     } finally {
       setLoading(false);
     }
@@ -1576,36 +1798,59 @@ Provide your response in an elegant markdown format with the following four clea
 Output direct, vivid paragraphs with no conversational prefaces or postfaces.`;
 
     try {
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: storyboardPayload,
-          temperature: 0.6,
-          modelName: 'gemini-3.5-flash'
-        })
-      });
+      let data: any = null;
+      let fallbackToDirectClient = false;
+      let response: Response | null = null;
+      let text = "";
 
-      const text = await response.text();
-      if (text.trim().toLowerCase().startsWith('<!doctype') || text.trim().toLowerCase().startsWith('<html')) {
-        throw new Error("Received an HTML response instead of JSON. The server could be warming up, restarting, or misconfigured.");
-      }
-
-      let data: any;
       try {
-        data = JSON.parse(text);
-      } catch (parseErr) {
-        throw new Error("Invalid response format. Failed to parse storyboard response as JSON.");
+        response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: storyboardPayload,
+            temperature: 0.6,
+            modelName: 'gemini-3.5-flash',
+            apiKey: userApiKey
+          })
+        });
+
+        text = await response.text();
+        if (text.trim().toLowerCase().startsWith('<!doctype') || text.trim().toLowerCase().startsWith('<html')) {
+          fallbackToDirectClient = true;
+        } else {
+          try {
+            data = JSON.parse(text);
+          } catch (parseErr) {
+            throw new Error("Invalid response format. Failed to parse storyboard response as JSON.");
+          }
+        }
+      } catch (errLoop: any) {
+        fallbackToDirectClient = true;
       }
 
-      if (data.status === 'success') {
+      if (fallbackToDirectClient) {
+        if (userApiKey && userApiKey.trim() !== '') {
+          console.log("Static hosting (Netlify) or backend error detected. Direct client-side storyboard generation routing activated.");
+          const directResult = await callGeminiDirectly(userApiKey.trim(), storyboardPayload, undefined, 0.6);
+          data = { status: 'success', text: directResult };
+        } else {
+          throw new Error("Static Host (Netlify) Detected: This browser-based app is currently hosted on a static server without an active backend. To use the 'VISUALIZE' feature here, please paste your free Google AI Studio API key by clicking '[✨ Enhance with AI]' to configure your browser interface.");
+        }
+      }
+
+      if (data && data.status === 'success') {
         setStoryboardText(data.text || "Directives compile completed.");
         setShowStoryboard(true);
       } else {
-        setErr(data.message || "Failed to generate visual storyboard layout.");
+        setErr((data && data.message) || "Failed to generate visual storyboard layout.");
       }
     } catch (e: any) {
-      setErr(e.message || "Visualizer compile failed.");
+      if (e.message && e.message.includes("Static Host")) {
+        setErr(e.message);
+      } else {
+        setErr(`${e.message || "Visualizer compile failed."} Please check that your Gemini API key is valid.`);
+      }
     } finally {
       setStoryboardLoading(false);
     }
@@ -1622,24 +1867,53 @@ Output direct, vivid paragraphs with no conversational prefaces or postfaces.`;
     setDeconstructFeedback(null);
 
     try {
-      const response = await fetch('/api/deconstruct', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64: deconstructImage,
-          apiKey: userApiKey
-        })
-      });
+      let data: any = null;
+      let fallbackToDirectClient = false;
+      let response: Response | null = null;
+      let text = "";
 
-      const text = await response.text();
-      let data: any;
       try {
-        data = JSON.parse(text);
-      } catch {
-        throw new Error("Invalid response format. Non-JSON response received.");
+        response = await fetch('/api/deconstruct', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            imageBase64: deconstructImage,
+            apiKey: userApiKey
+          })
+        });
+
+        text = await response.text();
+        if (text.trim().toLowerCase().startsWith('<!doctype') || text.trim().toLowerCase().startsWith('<html')) {
+          fallbackToDirectClient = true;
+        } else {
+          try {
+            data = JSON.parse(text);
+          } catch {
+            throw new Error("Invalid response format. Non-JSON response received.");
+          }
+        }
+      } catch (errLoop) {
+        fallbackToDirectClient = true;
       }
 
-      if (data.status === 'success' && data.data) {
+      if (fallbackToDirectClient) {
+        if (userApiKey && userApiKey.trim() !== '') {
+          console.log("Static hosting (Netlify) or backend error detected. Direct client-side image deconstruction activated.");
+          const directResult = await deconstructDirectly(userApiKey.trim(), deconstructImage, deconstructSystemInstructionClient);
+          let parsedDirectResult;
+          try {
+            parsedDirectResult = JSON.parse(directResult);
+          } catch {
+            const stripped = directResult.replace(/```json/i, '').replace(/```/g, '').trim();
+            parsedDirectResult = JSON.parse(stripped);
+          }
+          data = { status: 'success', data: parsedDirectResult };
+        } else {
+          throw new Error("Static Host (Netlify) Detected: Your image reverse-engineering could not be processed because Netlify lacks a server backend. To analyze custom visual references here, please click '[✨ Enhance with AI]' or click the key icon to configure your own free Google AI Studio API Key.");
+        }
+      }
+
+      if (data && data.status === 'success' && data.data) {
         const payload = data.data.ui_mapping || data.data;
         const detTeardown = data.data.detailed_teardown || null;
         setDetailedTeardown(detTeardown);
