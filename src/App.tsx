@@ -60,22 +60,71 @@ interface TaxType {
 }
 
 const GENRE_DEFAULTS: Record<string, Record<string, string>> = {
-  "Film noir": { lighting: "Low-key", color: "B&W high-contrast", mood: "Tense, urban night", shadow: "Cinematic split shadows" },
-  "Cyberpunk": { lighting: "Neon / night", color: "Teal & orange", mood: "Dystopian, electric" },
-  "Steampunk": { color: "Warm nostalgic", mood: "Victorian, mechanical" },
-  "Synthwave": { lighting: "Neon / night", color: "Neon / vivid", mood: "Retro 80s" },
-  "Vaporwave": { color: "Pastel / soft", mood: "Surreal, nostalgic" },
-  "Cottagecore": { lighting: "Golden hour", color: "Warm nostalgic", mood: "Idyllic, cozy" },
-  "Dark academia": { lighting: "Candlelight", color: "Muted / earthy", mood: "Scholarly, moody" },
-  "Solarpunk": { lighting: "Golden hour", color: "High saturation", mood: "Optimistic, lush" },
-  "High fantasy": { lighting: "Volumetric / god rays", mood: "Epic, magical" },
-  "Dark fantasy": { lighting: "Low-key", color: "Muted / earthy", mood: "Grim, ominous" },
-  "Gothic horror": { lighting: "Candlelight", color: "Cool / cold", mood: "Foreboding, ornate", shadow: "Chiaroscuro" },
-  "Post-apocalyptic": { color: "Muted / earthy", mood: "Desolate, dusty" },
-  "1950s": { color: "Warm nostalgic", mood: "Optimistic post-war" },
-  "1970s": { color: "Warm nostalgic", mood: "Earthy, warm analog" },
-  "1980s": { color: "Neon / vivid", mood: "Bold, high-energy" },
-  "1990s": { color: "Desaturated", mood: "Grunge, understated" },
+  // Popular
+  "Film noir": { lighting: "Low-key", color: "B&W high-contrast", mood: "Tense", shadow: "Cinematic split shadows" },
+  "Cyberpunk": { lighting: "Neon / night", color: "Teal & orange", mood: "Dramatic", shadow: "Dramatic high-contrast" },
+  "Cottagecore": { lighting: "Golden hour", color: "Warm nostalgic", mood: "Serene", shadow: "Dappled shadows" },
+  "Dark academia": { lighting: "Candlelight", color: "Muted / earthy", mood: "Moody", shadow: "Soft shadows" },
+  "Synthwave": { lighting: "Neon / night", color: "High saturation", mood: "Nostalgic", shadow: "Hard-edged shadows" },
+  "Vaporwave": { lighting: "Soft glow", color: "Pastel / soft", mood: "Surreal", shadow: "Soft shadows" },
+  "High fantasy": { lighting: "Volumetric / god rays", color: "High saturation", mood: "Ethereal", shadow: "Soft shadows" },
+  "Steampunk": { lighting: "Tungsten / warm", color: "Warm nostalgic", mood: "Nostalgic", shadow: "Hard-edged shadows" },
+
+  // The -punks
+  "Dieselpunk": { lighting: "Hard light", color: "Bleach bypass", mood: "Gritty", shadow: "Hard-edged shadows" },
+  "Solarpunk": { lighting: "Golden hour", color: "High saturation", mood: "Serene", shadow: "Dappled shadows" },
+  "Atompunk": { lighting: "Harsh midday", color: "Technicolor", mood: "Nostalgic", shadow: "Hard-edged shadows" },
+  "Biopunk": { lighting: "Bioluminescence", color: "Green dystopian", mood: "Surreal", shadow: "Opaque dense shadows" },
+  "Clockpunk": { lighting: "Tungsten / warm", color: "Sepia", mood: "Nostalgic", shadow: "Long casting shadows" },
+  "Nanopunk": { lighting: "Neon / night", color: "Cool / cold", mood: "Cinematic", shadow: "Ambient occlusion" },
+  "Decopunk": { lighting: "Studio softbox", color: "Teal & orange", mood: "Elegant", shadow: "Contour shadows" },
+  "Cassette futurism": { lighting: "Fluorescent", color: "Cross-process", mood: "Nostalgic", shadow: "Soft shadows" },
+
+  // Fantasy & speculative
+  "Dark fantasy": { lighting: "Low-key", color: "Muted / earthy", mood: "Moody", shadow: "Chiaroscuro" },
+  "Gothic fantasy": { lighting: "Candlelight", color: "Cool / cold", mood: "Melancholic", shadow: "Chiaroscuro" },
+  "Fairycore": { lighting: "String / fairy lights", color: "Pastel / soft", mood: "Ethereal", shadow: "Dappled shadows" },
+  "Cosmic horror": { lighting: "Low-key", color: "Green dystopian", mood: "Surreal", shadow: "Opaque dense shadows" },
+  "Mythic / folklore": { lighting: "Volumetric / god rays", color: "Muted / earthy", mood: "Ethereal", shadow: "Dappled shadows" },
+  "Sword & sorcery": { lighting: "Firelight", color: "Warm nostalgic", mood: "Dramatic", shadow: "Dramatic high-contrast" },
+  "Post-apocalyptic": { lighting: "Harsh midday", color: "Bleach bypass", mood: "Gritty", shadow: "Opaque dense shadows" },
+
+  // Sci-fi
+  "Hard sci-fi": { lighting: "Hard light", color: "Cool / cold", mood: "Cinematic", shadow: "Ambient occlusion" },
+  "Space opera": { lighting: "Concert / stage", color: "High saturation", mood: "Dramatic", shadow: "Dramatic high-contrast" },
+  "Retro sci-fi": { lighting: "Lens flares", color: "Technicolor", mood: "Nostalgic", shadow: "Hard-edged shadows" },
+  "Used future": { lighting: "Fluorescent", color: "Bleach bypass", mood: "Gritty", shadow: "Opaque dense shadows" },
+  "Utopian future": { lighting: "High-key", color: "Pastel / soft", mood: "Serene", shadow: "Soft shadows" },
+  "Cosmic / space": { lighting: "Rim / edge", color: "Cool / cold", mood: "Surreal", shadow: "Opaque dense shadows" },
+
+  // Cinematic / noir / period
+  "Neo-noir": { lighting: "Neon / night", color: "Bleach bypass", mood: "Tense", shadow: "Cinematic split shadows" },
+  "Gothic horror": { lighting: "Candlelight", color: "Cool / cold", mood: "Moody", shadow: "Chiaroscuro" },
+  "Western": { lighting: "Harsh midday", color: "Sepia", mood: "Nostalgic", shadow: "Long casting shadows" },
+  "Spaghetti western": { lighting: "Golden hour", color: "Technicolor", mood: "Dramatic", shadow: "Long casting shadows" },
+  "Baroque": { lighting: "Chiaroscuro", color: "Warm nostalgic", mood: "Luxurious", shadow: "Chiaroscuro" },
+  "Victorian Gothic": { lighting: "Low-key", color: "Monochrome", mood: "Melancholic", shadow: "Chiaroscuro" },
+  "Art deco world": { lighting: "Studio softbox", color: "Teal & orange", mood: "Elegant", shadow: "Contour shadows" },
+
+  // Internet / -cores
+  "Light academia": { lighting: "Natural window", color: "Pastel / soft", mood: "Serene", shadow: "Soft shadows" },
+  "Y2K": { lighting: "Lens flares", color: "High saturation", mood: "Playful", shadow: "Hard-edged shadows" },
+  "Weirdcore": { lighting: "Overcast", color: "Cross-process", mood: "Surreal", shadow: "Opaque dense shadows" },
+  "Dreamcore": { lighting: "Soft glow", color: "Pastel / soft", mood: "Surreal", shadow: "Soft shadows" },
+  "Liminal space": { lighting: "Fluorescent", color: "Muted / earthy", mood: "Tense", shadow: "Long casting shadows" },
+  "Goblincore": { lighting: "Natural window", color: "Muted / earthy", mood: "Moody", shadow: "Dappled shadows" },
+  "Frutiger Aero": { lighting: "High-key", color: "High saturation", mood: "Playful", shadow: "Soft shadows" },
+  "Brutalist": { lighting: "Harsh midday", color: "Monochrome", mood: "Gritty", shadow: "Opaque dense shadows" },
+  "Minimalist": { lighting: "Soft / diffused", color: "Pastel / soft", mood: "Editorial", shadow: "Soft shadows" },
+
+  // Era / period
+  "1920s": { lighting: "Chiaroscuro", color: "Sepia", mood: "Elegant", shadow: "Chiaroscuro" },
+  "1950s": { lighting: "Natural window", color: "Technicolor", mood: "Nostalgic", shadow: "Soft shadows" },
+  "1960s": { lighting: "Studio softbox", color: "Cross-process", mood: "Playful", shadow: "Hard-edged shadows" },
+  "1970s": { lighting: "Natural window", color: "Warm nostalgic", mood: "Nostalgic", shadow: "Soft shadows" },
+  "1980s": { lighting: "Neon / night", color: "High saturation", mood: "Nostalgic", shadow: "Hard-edged shadows" },
+  "1990s": { lighting: "Overcast", color: "Bleach bypass", mood: "Gritty", shadow: "Opaque dense shadows" },
+  "2000s": { lighting: "Lens flares", color: "Cross-process", mood: "Playful", shadow: "Soft shadows" },
 };
 
 const TAX: Record<string, TaxType> = {
@@ -318,12 +367,104 @@ const TIPS: Record<string, string> = {
   "Isometric": "A rigid 30-degree orthographic layout with absolute scale preservation; completely avoids camera perspective distortion.",
 
   // Gen / Punks / Internet Cores
-  "Cyberpunk": "Rain-slick city streets bouncing neon-pink and neon-teal beams under heavy futuristic storm atmospheres.",
   "Film noir": "Vintage 1940s mystery; stark venetian blinds casting shadows, dripping street-lamps, mist, and deep high-contrast shadows.",
+  "Cyberpunk": "Rain-slick city streets bouncing neon-pink and neon-teal beams under heavy futuristic storm atmospheres.",
   "Cottagecore": "Cozy, wholesome field aesthetics; golden sunbeams, natural organic textiles, handcrafts, and rustic floral palettes.",
   "Dark academia": "Moody intellectualism; dark walnut libraries, vintage leather volumes, cozy tweed, ink stains, and warm candlelight.",
+  "Synthwave": "Outrun 1980s retro-futurism; wireframe grids, glowing neon skylines, hot pink suns, and analog synthesizer waveforms.",
   "Vaporwave": "Dreamlike digital nostalgia; pastel pink grids, glitch artifacts, Greco-Roman sculptural pieces, and soft sunset hues.",
-  "Brutalist": "Raw monumentalism; heavy unadorned concrete grids, massive geometrical constructs, and clean monolithic forms."
+  "High fantasy": "Epic, magical medieval wonder; glowing crystals, towering castles, majestic sunbeams, and a sense of ancient magic.",
+  "Steampunk": "Victorian brass industrialism; clockwork gears, polished copper pipes, steam plumes, and antiqued sepia tones.",
+
+  // Anime Styles
+  "Anime key visual": "Sleek, high-budget theatrical promotional art; crisp linework, vivid dynamic lighting, dramatic composition, and clean digital gradients.",
+  "Shonen (action, bold)": "High-energy heroic styling; features bold dynamic impact lines, dramatic high-contrast cell shading, intense action poses, and vibrant atmospheric bloom.",
+  "Shojo (soft, romantic)": "Ethereal romantic aesthetic; soft focus boundaries, pastel color palettes, sparkling decorative screen-tones, starry eyes, and floating flower petals.",
+  "Seinen (mature, realistic)": "Intense, highly detailed mature aesthetic; subtle realistic lighting gradients, complex crosshatched shadows, and cinematic, gritty scene compositions.",
+  "Josei (grounded, muted)": "Sophisticated everyday realism; natural slice-of-life lighting, organic muted color-ways, clean line work, and emotionally resonant framing.",
+  "Mecha anime": "Futuristic mechanical design; panel-lined heavy armor, metallic paint reflections, glowing thruster arrays, and epic high-tech sci-fi layouts.",
+  "Slice-of-life anime": "Charming casual aesthetic; soft warm natural light, cozy detailed environments, pastel colors, and relaxing, nostalgic everyday moments.",
+  "Kawaii chibi": "Adorable super-deformed style; oversized heads, tiny expressive bodies, bright saturated flat colors, and cheerful, thick outlines.",
+  "Studio Ghibli-style": "Nostalgic master-crafted hand-painted watercolor and gouache backgrounds, soft organic wind-swept textures, warm lighting, and pastoral natural beauty.",
+  "Makoto Shinkai-style (photoreal bg, lens flare)": "Ultra-photorealistic luminous landscapes; characterized by breathtaking sunset sky-scapes, dramatic anamorphic lens flares, and highly reflective water surfaces.",
+  "Ufotable-style (2D+CGI, particle bloom)": "Cutting-edge hybrid 2D and 3D integration; high-octane camera movements, glowing digital particle effects, and rich, saturated color-grading.",
+  "Studio Trigger-style (jagged, neon, impact frames)": "Unapologetically bold and graphic; features jagged expressive lines, neon pop color palettes, extreme perspective distortion, and high-contrast impact frames.",
+  "MAPPA-style (gritty, fluid)": "Modern high-fidelity action; incredibly fluid hand-drawn fight choreography, cinematic camera tracking, realistic grit, and moody color grading.",
+  "90s retro anime (grain, VHS)": "Hand-painted physical cell aesthetic; nostalgic analog chromatic aberration, subtle VHS scanline fuzz, rich dark-saturated inks, and warm dust specs.",
+  "80s anime (realistic, dark)": "Gothic and sci-fi hand-drawn cell masterpieces; high-detailed ink shadings, atmospheric city rain, dark neon lighting, and high-fidelity hand-painted mechanical designs.",
+
+  // Other Illustration Styles
+  "Painterly 2.5D (3D + hand-painted)": "3D structure painted with traditional brushstrokes, blending physical mass and handcrafted artistry.",
+  "Impasto brushwork": "Thickly applied paint stand-out texture, showcasing heavy, wet-looking brushstroke trails and relief ridges.",
+  "Moving-oil-painting look": "Liquid flowing oil strokes, capturing the hypnotic shifting aesthetics of classical canvas paint in motion.",
+  "Concept-art painterly": "Sleek, evocative digital paint washes, emphasizing light direction, loose structural shapes, and dramatic atmosphere.",
+  "Retro comic / pop": "Vintage printed halftone dots, high contrast ink contours, and retro pop-art printing press tones.",
+  "Graphic novel": "High-fidelity ink illustrations, detailed shading, cinematic graphic compositions, and serious dramatic tones.",
+  "Manga (B&W screentone)": "Classic black & white Japanese comic style, utilizing textured screentone overlays and expressive dynamic action lines.",
+  "Rubber-hose cartoon": "Vintage 1920s animation look, utilizing smooth curved black limbs, pie eyes, high-contrast ink plains, and light film grain.",
+  "Saturday-morning cartoon": "Retro 1980s television animation; features flat cel shading, bright saturated color palettes, and bold ink outlines.",
+  "Flat cutout": "Stylized flat shapes of paper or felt layered on top of each other, providing an elegant tactile dimensional depth.",
+  "Caricature": "Exaggerated, highly stylized human proportions and expressions, showcasing expressive cartoon pen lines.",
+  "Pixar-style 3D toon": "High-fidelity three-dimensional animation, characterized by smooth, glossy, tactile toy-like surfaces and warm cinematic light.",
+  "Tim Burton-esque": "Gothic whimsical aesthetics; long skeletal proportions, pale faces, dark hollowed eyes, and stitched patchworks.",
+  "Plush / crochet": "Tactile woven textures, soft fiber surfaces, visible knit patterns, yarn threads, and stuffed cute creature designs.",
+  "Storybook watercolor": "Nostalgic fluid watercolor washes, soft delicate pencil lines, and whimsical, cozy, hand-drawn fairy tale atmospheres.",
+
+  // The -punks
+  "Dieselpunk": "Gritty 1930s heavy industrial machinery, roaring radial engines, brushed steel, oily chrome, and art deco styling.",
+  "Solarpunk": "Eco-friendly optimistic future; lush vertical rooftop gardens, gleaming solar glass panels, flowing water, and soft natural sunlight.",
+  "Atompunk": "Mid-century retro-futurism; shiny chrome fins, bubble domes, rayguns, pop-art plastics, and sleek aerodynamic hulls.",
+  "Biopunk": "Organic biotech; glowing bioluminescent veins, wet organic membranes, living architecture, and clinical petri dish hues.",
+  "Clockpunk": "Intricate Renaissance gearworks; mechanical brass clockwork, complex astronomical devices, and hand-wound spring engines.",
+  "Nanopunk": "Sleek molecular tech; liquid metals, carbon fiber weaves, invisible self-assembling structures, and subtle neon indicators.",
+  "Decopunk": "Sleek retro-futuristic Art Deco; streamlining curves, brushed silver reliefs, luxurious lacquer, and cinematic warm tones.",
+  "Cassette futurism": "Tactile late 1970s analog-digital; blocky beige computers, green CRT screens, glowing segment displays, and heavy plastic buttons.",
+
+  // Fantasy & speculative
+  "Dark fantasy": "Grim medieval dark fantasy; ancient mossy stone, dark damp pine forests, cold mist, rusted chainmail, and low-key fires.",
+  "Gothic fantasy": "Haunted Victorian romance; towering iron gates, overgrown cemetery yards, candelabras, velvet textures, and melancholic moonlight.",
+  "Fairycore": "Magical woodland enchantment; tiny glowing spores, shimmering fairy wings, soft pastel mushrooms, and secret wild-flower meadows.",
+  "Cosmic horror": "Unfathomable elder dread; eerie green bioluminescence, wet black stone, spiral patterns, and heavy oppressive shadows.",
+  "Mythic / folklore": "Timeless ancient legends; mist-veiled fjords, carved runestones, epic golden hour god-rays, and primitive woven textures.",
+  "Sword & sorcery": "Raw primitive fantasy adventure; flickering torches, dark underground dungeons, heavy steel broadswords, and dusty stone altars.",
+  "Post-apocalyptic": "Desolate weathered survival; crumbling rusted overpasses, cracked asphalt, windblown sand, and desaturated, sun-bleached horizons.",
+
+  // Sci-fi
+  "Hard sci-fi": "Physically grounded realistic space flight; clean white tiles, complex structural thruster arrays, vacuum of space, and crisp solar light.",
+  "Space opera": "Grand cosmic scale; glittering nebulae, massive battleships, intense energy beams, and dramatic theatrical spotlighting.",
+  "Retro sci-fi": "Classic mid-century pulp magazine art; colorful bubble helmets, retro space-suits, alien landscapes, and high-contrast printing inks.",
+  "Used future": "Lived-in, grimy industrial sci-fi; scratched control panels, leaking hydraulic fluid, yellow caution stripes, and dim fluorescent tubes.",
+  "Utopian future": "Flawless sleek futuristic design; smooth pearlescent surfaces, continuous curved pathways, soft light-fields, and peaceful gardens.",
+  "Cosmic / space": "Deep stellar environment; distant solar flares, glowing stellar dust clouds, extreme high contrast, and deep starlight exposures.",
+
+  // Cinematic / noir / period
+  "Neo-noir": "Modern gritty urban crime; sleek wet city asphalt reflecting intense neon pink, blue, and gold gels, under towering concrete structures.",
+  "Gothic horror": "Chilling 19th-century terror; gothic arches, heavy velvet curtains, cold candle glow, pale skin tones, and dense black shadows.",
+  "Western": "Classic rugged frontier; sweeping red canyons, weathered timber saloons, dry tumbleweeds, and harsh midday sun flare.",
+  "Spaghetti western": "Gritty high-contrast drama; intense close-ups, dusty gold panoramas, sweeping low sun casting long shadows, and Technicolor grades.",
+  "Baroque": "17th-century ornate luxury; deep rich golds, crimson damask, dramatic key-light beams, dark shadows, and majestic high-key accents.",
+  "Victorian Gothic": "Dark romanticism; black lace garments, cold iron gates, dripping candelabras, withered white roses, and heavy melancholic shadows.",
+  "Art deco world": "Gleaming 1920s architecture; symmetrical geometric patterns, polished brass trims, clean marble columns, and elegant soft lighting.",
+
+  // Internet / -cores
+  "Light academia": "Soft intellectualism; warm natural window sunlight, beige linen notebooks, cups of tea, dry pressed flowers, and serene ivory hues.",
+  "Y2K": "Optimistic turn-of-the-century tech; iridescent silver puffer jackets, transparent blue plastic shells, cybernetic designs, and bright camera flashes.",
+  "Weirdcore": "Surreal digital estrangement; nostalgic early internet visuals, low-resolution textures, bizarre floating text, and unsettling overexposed flashes.",
+  "Dreamcore": "Liminal surrealism; soft cotton-candy clouds, endless field horizons, floating doors, pastel light leaks, and a gentle hazy focus.",
+  "Liminal space": "Uncanny empty transition zones; fluorescent-lit office halls, yellowed wallpapers, unoccupied indoor pools, and long casting shadows.",
+  "Goblincore": "Earthy woodland foraging; damp moss, shiny smooth stones, snail shells, wild mushrooms, and rich forest soil colors.",
+  "Frutiger Aero": "Sleek 2000s tech-nature; glowing blue water ripples, shiny grass fields, clean glass bubbles, glossy white textures, and bright sunlight.",
+  "Brutalist": "Raw monumentalism; heavy unadorned concrete grids, massive geometrical constructs, and clean monolithic forms.",
+  "Minimalist": "Stripped-back elegant simplicity; vast negative space, soft neutral white surfaces, single subtle shadow lines, and precise editorial balance.",
+
+  // Era / period
+  "1920s": "Jazz age elegance; black and white high-contrast film, vintage beaded dresses, cigarette smoke trails, and warm sepia undertones.",
+  "1950s": "Post-war technicolor optimism; retro diner vinyl booths, shiny pastel cars, white picket fences, and warm nostalgic sunlight.",
+  "1960s": "Psychedelic flower power; bold swirling organic patterns, saturated warm color-ways, vintage studio flash lighting, and playful framing.",
+  "1970s": "Warm organic analog; rich corduroy fabrics, warm wood-paneled walls, analog film grain, and soft natural golden sunlight.",
+  "1980s": "Bold retro high-energy; neon accent lighting, high-contrast flash, cassette tape decks, VHS tracking lines, and vibrant color tones.",
+  "1990s": "Understated grunge realism; low-contrast flash, desaturated cool tones, oversized casual flannel, and a gritty analog snapshot vibe.",
+  "2000s": "Early digital nostalgia; low-fidelity glossy sensors, shiny metallic finishes, futuristic wireframes, and playful flash-photography frames."
 };
 
 const ELEMENT_TREATMENTS = [
@@ -656,6 +797,35 @@ function Chip({ label, active, onClick, onHover, colorTheme, fieldKey }: ChipPro
 
     // illustration - Style
     "Anime key visual": "High-End Animation Cell",
+    "Shonen (action, bold)": "Dynamic Action Anime",
+    "Shojo (soft, romantic)": "Romantic Pastel Dream",
+    "Seinen (mature, realistic)": "Grounded Mature Realism",
+    "Josei (grounded, muted)": "Refined Life Realism",
+    "Mecha anime": "Sci-Fi Heavy Armor",
+    "Slice-of-life anime": "Warm Everyday Cozy",
+    "Kawaii chibi": "Chibi Miniature Pop",
+    "Studio Ghibli-style": "Hand-Painted Ghibli Cell",
+    "Makoto Shinkai-style (photoreal bg, lens flare)": "Luminous Photoreal Sky",
+    "Ufotable-style (2D+CGI, particle bloom)": "Kinetic Hybrid Effects",
+    "Studio Trigger-style (jagged, neon, impact frames)": "Expressive Neon Jagged",
+    "MAPPA-style (gritty, fluid)": "Fluid Cinematic Grit",
+    "90s retro anime (grain, VHS)": "Retro Cell Nostalgia",
+    "80s anime (realistic, dark)": "Cyberpunk Hand-Drawn Cell",
+    "Painterly 2.5D (3D + hand-painted)": "Dimensional Brushwork",
+    "Impasto brushwork": "Thick Textured Oil",
+    "Moving-oil-painting look": "Fluid Painterly Motion",
+    "Concept-art painterly": "Sleek Digital Wash",
+    "Retro comic / pop": "Vintage Dot Pulp",
+    "Graphic novel": "Sophisticated Ink Draft",
+    "Manga (B&W screentone)": "Retro Screentone Print",
+    "Rubber-hose cartoon": "Vintage 1930s Ink",
+    "Saturday-morning cartoon": "Bold Retro Cel",
+    "Flat cutout": "Dimensional Paper Shape",
+    "Caricature": "Expressive Stylized Sketch",
+    "Pixar-style 3D toon": "Glossy CGI Toy",
+    "Tim Burton-esque": "Gothic Whimsical Dark",
+    "Plush / crochet": "Tactile Woven Yarn",
+    "Storybook watercolor": "Nostalgic Fluid Wash",
     "Children's book": "Nostalgic Storybook Whimsy",
     "American comic": "Bold Pulp Outlines",
     "Arcane / painterly hybrid": "Luminous Textured Hybrid",
@@ -774,11 +944,6 @@ function Chip({ label, active, onClick, onHover, colorTheme, fieldKey }: ChipPro
           <span className="font-bold text-[10.5px] leading-tight text-white/95 group-hover:text-amber-300 transition-colors font-mono tracking-tight" title={label}>
             {label}
           </span>
-          {hasTip && (
-            <span className={`text-[9px] select-none font-mono font-bold px-1 rounded ${active ? "text-amber-300" : "text-zinc-600 group-hover:text-zinc-400"}`}>
-              ⓘ
-            </span>
-          )}
         </div>
         <div className="flex items-center justify-between w-full gap-2.5 mt-0.5">
           <span className="text-[9px] text-zinc-500 group-hover:text-zinc-350 font-sans font-semibold tracking-wide">
@@ -830,11 +995,6 @@ function Chip({ label, active, onClick, onHover, colorTheme, fieldKey }: ChipPro
         <span className="font-extrabold text-[11.5px] text-zinc-100 group-hover:text-amber-300 transition-colors">
           {label}
         </span>
-        {hasTip && (
-          <span className={`text-[9px] select-none font-mono font-bold px-1 rounded ${active ? "text-amber-300" : "text-zinc-600 group-hover:text-zinc-400"}`}>
-            ⓘ
-          </span>
-        )}
         {active && (
           <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${
             colorTheme === "Photography" ? "bg-teal-400" :
@@ -1638,35 +1798,56 @@ export default function App() {
   const pickGenre = (g: string) => {
     if (genre === g) {
       setGenre(null);
-      return;
-    }
-    setGenre(g);
-    const d = GENRE_DEFAULTS[g];
-    if (d) {
       setSel(prev => {
         const next = { ...prev };
-        const af: Record<string, boolean> = {};
+        for (const [fieldKey, isAf] of Object.entries(autofilled)) {
+          if (isAf) {
+            delete next[fieldKey];
+          }
+        }
+        return next;
+      });
+      setAutofilled({});
+      return;
+    }
+
+    setGenre(g);
+    const d = GENRE_DEFAULTS[g];
+    
+    setSel(prev => {
+      const next = { ...prev };
+      
+      // Clear previously autofilled items so we don't carry them over or block new defaults
+      for (const [fieldKey, isAf] of Object.entries(autofilled)) {
+        if (isAf) {
+          delete next[fieldKey];
+        }
+      }
+      
+      const nextAutofill: Record<string, boolean> = {};
+      if (d) {
         for (const [k, v] of Object.entries(d)) {
           const fieldKey = { lighting: "Lighting", color: "Color grade", mood: "Mood", shadow: "Shadow" }[k];
           if (!fieldKey) continue;
+          
           const fieldDef = UNIVERSAL.find(f => f.key === fieldKey);
           if (!fieldDef) continue;
-          if (fieldDef.multi) {
-            if (!next[fieldKey] || next[fieldKey].length === 0) {
+          
+          const isCurrentlyEmpty = !next[fieldKey] || (Array.isArray(next[fieldKey]) && next[fieldKey].length === 0);
+          
+          if (isCurrentlyEmpty || autofilled[fieldKey]) {
+            if (fieldDef.multi) {
               next[fieldKey] = [v];
-              af[fieldKey] = true;
-            }
-          } else {
-            if (!next[fieldKey]) {
+            } else {
               next[fieldKey] = v;
-              af[fieldKey] = true;
             }
+            nextAutofill[fieldKey] = true;
           }
         }
-        setAutofilled(prevAf => ({ ...prevAf, ...af }));
-        return next;
-      });
-    }
+      }
+      setAutofilled(nextAutofill);
+      return next;
+    });
   };
 
   const recipe = useMemo(() => {
