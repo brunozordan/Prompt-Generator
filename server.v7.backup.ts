@@ -317,7 +317,129 @@ CRITICAL TECHNIQUE RULES:
   }
 });
 
+// SECURE Server-side API endpoint for Image Generation using Gemini Image Models
+app.post('/api/generate-image', async (req, res) => {
+  try {
+    const { prompt, modelName, apiKey, aspectRatio, imageSize } = req.body;
 
+    if (!prompt) {
+      return res.status(400).json({ status: 'error', message: 'Prompt is required.' });
+    }
+
+    let client;
+    if (apiKey && apiKey.trim() !== '') {
+      client = new GoogleGenAI({
+        apiKey: apiKey.trim(),
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
+    } else {
+      client = getGeminiClient();
+    }
+
+    const targetModel = modelName || 'gemini-3.1-flash-image';
+    const isImagenEngine = targetModel.startsWith('imagen-');
+
+    if (isImagenEngine) {
+      console.log(`[API Generate Image] Generating high-fidelity image using Imagen core model: ${targetModel}`);
+      try {
+        const response = await client.models.generateImages({
+          model: targetModel,
+          prompt: prompt,
+          config: {
+            numberOfImages: 1,
+            aspectRatio: aspectRatio || '1:1',
+            outputMimeType: 'image/jpeg',
+          },
+        });
+
+        const base64Data = response.generatedImages?.[0]?.image?.imageBytes;
+        if (!base64Data) {
+          throw new Error("No image bytes returned from Imagen model.");
+        }
+
+        return res.json({
+          status: 'success',
+          imageUrl: `data:image/jpeg;base64,${base64Data}`,
+          model: targetModel
+        });
+      } catch (err: any) {
+        console.error('Imagen API Call Failure:', err);
+        throw err;
+      }
+    } else {
+      // "Nano Banana" developer models (gemini-3.1-flash-image, gemini-3-pro-image, gemini-2.5-flash-image)
+      // use generateContent with imageConfig:
+      const config: any = {};
+      config.imageConfig = {
+        aspectRatio: aspectRatio || '1:1',
+        imageSize: imageSize || '1K'
+      };
+
+      console.log(`[API Generate Image] Generating content image using model: ${targetModel} and config:`, config);
+      const response = await client.models.generateContent({
+        model: targetModel,
+        contents: {
+          parts: [{ text: prompt }]
+        },
+        config: config
+      });
+
+      let base64Data = '';
+      if (
+        response.candidates && 
+        response.candidates[0] && 
+        response.candidates[0].content && 
+        response.candidates[0].content.parts
+      ) {
+        for (const part of response.candidates[0].content.parts) {
+          if (part.inlineData) {
+            base64Data = part.inlineData.data;
+            break;
+          }
+        }
+      }
+
+      if (!base64Data) {
+        throw new Error("No image data returned from Gemini. Ensure your API Key supports the selected image generation model.");
+      }
+
+      return res.json({
+        status: 'success',
+        imageUrl: `data:image/png;base64,${base64Data}`,
+        model: targetModel
+      });
+    }
+  } catch (error: any) {
+    console.error('Gemini Image Generation Error:', error);
+    let userMessage = error.message || 'An error occurred during image generation.';
+    const lowerMsg = userMessage.toLowerCase();
+    
+    // Detect quota limits, region limits, missing billing, or 403/404/429 permission problems and explain gently to the user
+    if (
+      lowerMsg.includes('quota') || 
+      lowerMsg.includes('limit') || 
+      lowerMsg.includes('exhausted') || 
+      lowerMsg.includes('429') || 
+      lowerMsg.includes('404') || 
+      lowerMsg.includes('403') || 
+      lowerMsg.includes('not found') || 
+      lowerMsg.includes('not supported') || 
+      lowerMsg.includes('billing') ||
+      lowerMsg.includes('permission')
+    ) {
+      userMessage = "Google Gemini Image (Gemini Image 3 / Pro) requires a premium Google AI Studio API Key with active billing (pay-as-you-go) enabled on your Google Cloud project. Standard free-tier keys or server keys do not support image generation. Please configure a billing-enabled key in the Settings or 'Key Config' modal, or switch to the free, unlimited FLUX model!";
+    }
+
+    res.status(500).json({
+      status: 'error',
+      message: userMessage,
+    });
+  }
+});
 
 // Configure development or production asset pipeline
 async function initializeServer() {

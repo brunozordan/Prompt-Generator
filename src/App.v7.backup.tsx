@@ -11,8 +11,6 @@ import {
   Trash2, 
   RefreshCw, 
   AlertTriangle, 
-  X,
-  GripVertical,
   ExternalLink,
   ChevronDown,
   ChevronUp,
@@ -699,81 +697,6 @@ const compileProsePrompt = (tech: string, sub: string, gen: string | null, selec
 };
 
 // ==========================================
-// COLOR-CODING AND COLLISION DETECTION RULES
-// ==========================================
-
-const getCategoryColor = (fieldKey: string | undefined): string => {
-  if (!fieldKey) return "zinc";
-  const k = fieldKey.toLowerCase();
-  if (["lens", "aperture", "camera format", "focus & blur", "shot size", "format & medium"].some(x => k.includes(x))) return "teal";
-  if (["lighting", "intensity", "light direction", "portrait pattern", "practical sources"].some(x => k.includes(x))) return "amber";
-  if (["color grade", "color treatment", "contrast & tone", "contrast", "grade"].some(x => k.includes(x))) return "indigo";
-  if (["unpolished realism", "texture", "materials", "pigment & ink", "skin / face", "device", "aesthetic"].some(x => k.includes(x))) return "emerald";
-  if (["style", "medium", "art movement", "line work", "tradition", "traditional", "print / craft", "movement"].some(x => k.includes(x))) return "rose";
-  if (["mood", "shadow", "composition"].some(x => k.includes(x))) return "fuchsia";
-  return "zinc";
-};
-
-interface TagConflict {
-  tagA: string;
-  tagB: string;
-  reason: string;
-}
-
-const detectTagConflicts = (activeTags: string[]): TagConflict[] => {
-  const conflicts: TagConflict[] = [];
-
-  const checkConflict = (groupA: string[], groupB: string[], reason: string) => {
-    const foundA = activeTags.filter(t => groupA.includes(t));
-    const foundB = activeTags.filter(t => groupB.includes(t));
-    if (foundA.length && foundB.length) {
-      foundA.forEach(a => {
-        foundB.forEach(b => {
-          conflicts.push({ tagA: a, tagB: b, reason });
-        });
-      });
-    }
-  };
-
-  // 1. Shallow Focus vs Infinite Depth Focus
-  checkConflict(
-    ["f/1.2", "f/1.4", "f/1.8", "Shallow depth of field", "Bokeh background", "Lens blur"],
-    ["f/8", "f/16", "Sharp throughout"],
-    "Contradictory Focus (Shallow vs Deep Field)"
-  );
-
-  // 2. Soft/Diffused Lighting vs Hard/Harsh Lighting
-  checkConflict(
-    ["Soft / diffused", "Overcast", "Soft glow", "Studio softbox", "Bounced", "Natural window"],
-    ["Hard light", "Harsh midday", "Direct harsh flash", "Fresnel / spot"],
-    "Lighting Clash (Soft vs Harsh Light)"
-  );
-
-  // 3. Contrast Contradiction
-  checkConflict(
-    ["High contrast", "B&W high-contrast", "Crushed blacks"],
-    ["Low contrast / soft", "Faded / matte (lifted blacks)", "Flat / lifted shadows", "Hazy / misty"],
-    "Contrast Inconsistency (High vs Low Contrast)"
-  );
-
-  // 4. Photoreal Medium vs Non-Photoreal Medium / Art style
-  checkConflict(
-    ["Photorealistic", "Leica M6 (35mm street realism)", "Arri Alexa LF (ultra-grade digital cinema)", "Hasselblad 500C (square 6x6 medium format)"],
-    ["Stylized 3D", "Clay render", "Flat vector", "Flat 2D cartoon", "Line art (minimal)", "Anime key visual", "Doodle", "Pixel art"],
-    "Artistic Style Conflict (Photorealism vs Stylized/Flat Art)"
-  );
-
-  // 5. Low-Fi Mobile Device vs Ultra-High Cine Gear
-  checkConflict(
-    ["iPhone photo", "Selfie", "Cheap 2000s digicam", "Straight from phone"],
-    ["Arri Alexa LF (ultra-grade digital cinema)", "Large format 8x10 view camera", "Hasselblad 500C (square 6x6 medium format)"],
-    "Camera Hardware Conflict (Mobile vs Cinematic Gear)"
-  );
-
-  return conflicts;
-};
-
-// ==========================================
 // SUB-CHIP COMPONENT
 // ==========================================
 
@@ -856,28 +779,8 @@ function Chip({ label, active, onClick, onHover, colorTheme, fieldKey }: ChipPro
     "Vintage 16mm Bolex (tactile indie scan)": "Handheld 16mm Gate Scan",
 
     "Natural skin texture": "Unfiltered Raw Detail",
-    "Freckles": "Sun-Kissed Pigment Dots",
-    "Laugh lines": "Expressive Joy Creases",
-    "Wrinkles": "Authentic Maturity Folds",
-    "Stray hairs": "Flyaway Fringe Strands",
-    "Minor blemishes": "Real Human Textures",
-    "Rosy cheeks": "Natural Flushed Glow",
-    "Asymmetrical face": "Organic Character Balance",
-    "Non-idealized beauty": "Raw Unfiltered Appeal",
-
     "iPhone photo": "Candid Snapshot",
-    "Selfie": "Handheld Personal Snapshot",
-    "Point-and-shoot": "Nostalgic Pocket Camera",
-    "Cheap 2000s digicam": "Y2K Low-Fi Sensor",
-    "Direct harsh flash": "Stark Contrast Illumination",
     "Candid by friend": "Casual Lifestyle Capture",
-    "Straight from phone": "No Filter Mobile Render",
-
-    "Awkwardly cropped": "Spontaneous Candid Framing",
-    "Looking away": "Unposed Off-Camera Gaze",
-    "Cluttered background": "Messy Lived-In Setting",
-    "Everyday moment": "Common Mundane Beauty",
-    "Blown highlights": "Overexposed Bright Glows",
 
     // illustration - Medium & Print
     "Flat vector": "Clean Geometric Shapes",
@@ -1016,22 +919,7 @@ function Chip({ label, active, onClick, onHover, colorTheme, fieldKey }: ChipPro
       themeClasses = "bg-indigo-500/15 border-indigo-500 text-indigo-350 shadow-[0_0_12px_rgba(99,102,241,0.3)] scale-[1.015]";
     }
   } else {
-    const catColor = getCategoryColor(fieldKey);
-    if (catColor === "teal") {
-      themeClasses = "bg-teal-950/20 hover:bg-teal-950/30 text-teal-300/85 hover:text-teal-200 border-teal-500/15 hover:border-teal-500/35";
-    } else if (catColor === "amber") {
-      themeClasses = "bg-amber-950/20 hover:bg-amber-950/30 text-amber-300/85 hover:text-amber-200 border-amber-500/15 hover:border-amber-500/35";
-    } else if (catColor === "indigo") {
-      themeClasses = "bg-indigo-950/20 hover:bg-indigo-950/30 text-indigo-300/85 hover:text-indigo-200 border-indigo-500/15 hover:border-indigo-500/35";
-    } else if (catColor === "emerald") {
-      themeClasses = "bg-emerald-950/20 hover:bg-emerald-950/30 text-emerald-300/85 hover:text-emerald-200 border-emerald-500/15 hover:border-emerald-500/35";
-    } else if (catColor === "rose") {
-      themeClasses = "bg-rose-950/20 hover:bg-rose-950/30 text-rose-300/85 hover:text-rose-200 border-rose-500/15 hover:border-rose-500/35";
-    } else if (catColor === "fuchsia") {
-      themeClasses = "bg-fuchsia-950/20 hover:bg-fuchsia-950/30 text-fuchsia-300/85 hover:text-fuchsia-200 border-fuchsia-500/15 hover:border-fuchsia-500/35";
-    } else {
-      themeClasses = "bg-zinc-950/40 hover:bg-zinc-900/65 text-zinc-400 hover:text-white border-white/[0.04] hover:border-white/[0.09]";
-    }
+    themeClasses = "bg-zinc-950/40 hover:bg-zinc-900/65 text-zinc-400 hover:text-white border-white/[0.04] hover:border-white/[0.09]";
   }
 
   if (hasTranslation) {
@@ -1591,8 +1479,6 @@ export default function App() {
   const [genre, setGenre] = useState<string | null>(null);
   const [sel, setSel] = useState<Record<string, any>>({});
   const [autofilled, setAutofilled] = useState<Record<string, boolean>>({});
-  const [tokenOrder, setTokenOrder] = useState<string[]>([]);
-  const [customOrderActive, setCustomOrderActive] = useState<boolean>(false);
   
   const [genreOpen, setGenreOpen] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
@@ -1625,9 +1511,36 @@ export default function App() {
   // Glossary explanation card hover state
   const [hoveredTip, setHoveredTip] = useState<{ label: string; tip: string } | null>(null);
 
-  // Active view tab for the output deck: "prose" | "json" | "tags" | "teardown"
-  const [outputTab, setOutputTab] = useState<"prose" | "json" | "tags" | "teardown">("prose");
+  // Active view tab for the output deck: "prose" | "json" | "tags" | "teardown" | "renderer"
+  const [outputTab, setOutputTab] = useState<"prose" | "json" | "tags" | "teardown" | "renderer">("prose");
   const [detailedTeardown, setDetailedTeardown] = useState<any | null>(null);
+
+  // Studio Renderer States
+  const [renderEngine, setRenderEngine] = useState<"flux" | "gemini-3.1-flash-image" | "gemini-3-pro-image">("flux");
+  const [renderAspectRatio, setRenderAspectRatio] = useState<"1:1" | "16:9" | "9:16" | "4:3" | "3:4">("16:9");
+  const [renderResolution, setRenderResolution] = useState<"512px" | "1K" | "2K" | "4K">("1K");
+  const [customRenderPrompt, setCustomRenderPrompt] = useState("");
+  const [isRendering, setIsRendering] = useState(false);
+  const [renderedImage, setRenderedImage] = useState<string | null>(null);
+  const [renderError, setRenderError] = useState<string | null>(null);
+  const [renderHistory, setRenderHistory] = useState<Array<{
+    id: string;
+    url: string;
+    prompt: string;
+    engine: string;
+    timestamp: string;
+    aspectRatio: string;
+    resolution: string;
+  }>>([]);
+
+  // Anti-Distortion and scaling settings for non-square ratios
+  const [fluxAspectMode, setFluxAspectMode] = useState<"crop" | "native">("crop");
+  const [imageScaleMode, setImageScaleMode] = useState<"cover" | "contain">("cover");
+
+  // Render Studio & Alternative sandbox states
+  const [showRenderStudio, setShowRenderStudio] = useState<boolean>(true);
+  const [fluxModelStyle, setFluxModelStyle] = useState<"flux" | "flux-realism" | "flux-anime" | "flux-3d">("flux");
+  const [copySuccessToast, setCopySuccessToast] = useState<string | null>(null);
 
   // Local saved drafts system
   const [savedVault, setSavedVault] = useState<SavedPrompt[]>([]);
@@ -1734,57 +1647,7 @@ export default function App() {
       "A cozy futuristic research base inside a massive glowing underground crystal geode cavern",
       "A majestic bioluminescent stingray gliding above the pristine sunken neon ruins of a fantasy clocktower",
       "An old lighthouse keeper operating a massive glowing prism crystal during a colossal crimson thunderstorm",
-      "A sleek modern hover-train speeding down an elevated mountain bridge above sea of clouds at sunrise",
-      "A macro portrait of a green tree frog sitting perfectly on a water droplet, reflecting a miniature neon Tokyo street",
-      "An overgrown Art Deco glass greenhouse filled with floating luminescent jellyfish-like orchids",
-      "A weathered brass pocket watch with complex moving gears, spilling sand and glowing stardust onto a black velvet surface",
-      "A dramatic low-angle shot of a brutalist concrete tower wrapped in lush, cascading emerald ivy under a stormy lilac sky",
-      "A lonely classic vintage red sports car parked under a single flickering sodium streetlamp in a wet, dark cinematic alleyway",
-      "An intricate, glowing origami paper dragon perched atop an ancient leather-bound wizard's grimoire",
-      "A hyper-detailed close-up of human eyes reflecting the complex geometric neon grids of a futuristic virtual city",
-      "A secret library carved into the heart of a giant ancient redwood tree, with sunbeams piercing through dusty amber air",
-      "A futuristic desert nomad riding a giant, metallic-plated biomechanical camel across pristine ivory sand dunes",
-      "An underwater ballroom where ethereal figures in shimmering, flowy silk dresses dance among friendly coral reefs",
-      "A sleek glass skyscraper shaped like an unfolding lotus flower, gleaming under the golden hour light of a twin-sun horizon",
-      "A close-up macro shot of iridescent butterfly wings showing complex microscopic crystalline structures",
-      "A cozy warm cafe on a rainy evening, with soft warm amber indoor lights, steamed windows, and a sleepy tabby cat",
-      "A majestic stag made entirely of glowing crystalline branches walking through a silent, deep winter pine forest",
-      "A vintage analog recording studio cluttered with patch cables, tape reels, and warm vacuum tubes glowing in a dark room",
-      "A breathtaking cybernetic turtle carrying an entire miniature glowing forest ecosystem on its armored mossy shell",
-      "An elegant Venetian gondola floating on a canal of liquid gold, with reflection of a magnificent crimson cathedral",
-      "A futuristic vertical farm inside a high-rise spire, with cascades of neon purple LED lighting and hydroponic vines",
-      "A weathered medieval knight sitting by a small campfire in a glowing mushroom grotto, reflecting on his dented armor",
-      "An abstract composition of swirling pearlescent oil paint, mixing dark obsidian, liquid mercury, and electric copper",
-      "A close-up of a rustic typewriter with letters made of miniature growing flowers, typing a message of light",
-      "A colossal ancient stone hand rising from the sea, holding a tiny glowing modern glass pavilion on its palm",
-      "A vintage 1970s retro-futuristic living room with orange curved furniture, a sphere TV, and a panoramic view of Saturn's rings",
-      "A sleek aerodynamic concept motorcycle speeding through a misty neon-drenched futuristic cyberpunk highway",
-      "A majestic golden eagle with feathers made of polished brass and silver plates soaring through dark thunderclouds",
-      "An ethereal forest shrine where floating ancient stone runestones are bound together by glowing turquoise plasma arcs",
-      "A dramatic cinematic portrait of an old clockmaker with golden clockwork gears subtly integrated into his spectacles",
-      "A surreal floating archipelago of mossy rocks drifting silently above a vast, endless ocean under a starry galaxy sky",
-      "A minimalist zen rock garden in black sand, with a single glowing neon blue orb casting crisp concentric shadows",
-      "A cozy, warm alpine cabin interior with a stone fireplace, sheepskin rugs, and a massive window looking at the Northern Lights",
-      "An intricate porcelain teacup overflowing with a turbulent, miniature ocean storm, complete with a tiny pirate ship",
-      "A cyberpunk street vendor slicing glowing holographic neon noodles under a rusty metal awning during a rainstorm",
-      "A giant, abandoned rusted satellite dish in a wild field of yellow sunflowers, reclaimed by nature under a starry night",
-      "A dramatic close-up of a crystalline chess set where the pieces are intricately sculpted out of pure obsidian and glowing quartz",
-      "A futuristic botanical dome on Mars, looking out to the red Martian desert while lush green tropical palms thrive inside",
-      "A surreal retro polaroid of a giant floating whale soaring through pink cotton candy clouds at sunset",
-      "A close-up of a retro-futuristic cassette tape recorder with neon-colored glowing liquid pulsing inside the tape spool",
-      "A high-fashion dramatic portrait of a model wearing a gown made entirely of fluid, sculpted water splash",
-      "An ancient stone archway in a desert, framing a perfect, crystal-clear view of a lush tropical paradise island on the other side",
-      "A detailed conceptual render of a biomechanical heart, with complex copper brass pipes, glass chambers, and red fiber optics",
-      "A magical railway station where the steam engine train is made of glowing stained glass, casting beautiful colored light",
-      "A surreal desert scene where the sand dunes are deep blue velvet and the sky is filled with giant floating bubbles",
-      "A macro photograph of dew drops on a spiderweb, each acting as a perfect spherical lens reflecting a distant burning campfire",
-      "An ultra-modern minimalist concrete villa built into the side of a sheer black volcanic cliff overlooking a stormy dark ocean",
-      "A whimsical hand-drawn style illustration of a small woodland mouse wearing a hazelnut helmet and carrying a dandelion shield",
-      "A dramatic low-key studio shot of an elegant obsidian violin with strings made of pure glowing white lasers",
-      "An overgrown cyber-archaeological dig site, with researchers brushing dust off ancient glowing metallic memory cores",
-      "A breathtaking deep-sea landscape with a colossal mechanical kraken dormant inside a thermal vent surrounded by golden crabs",
-      "A surreal street scene where classic brick apartments are floating gently like hot air balloons above a misty valley",
-      "A stunning futuristic observatory perched on a snowy mountain peak, pointing a colossal glowing lens at a ringed planet"
+      "A sleek modern hover-train speeding down an elevated mountain bridge above sea of clouds at sunrise"
     ];
 
     const randomSubject = RANDOM_SUBJECTS[Math.floor(Math.random() * RANDOM_SUBJECTS.length)];
@@ -1937,55 +1800,6 @@ export default function App() {
     }
   }, [sel, specificFields, toggle]);
 
-  // Drag and Drop token sorting event handlers
-  const handleDragStartToken = (e: React.DragEvent, index: number) => {
-    e.dataTransfer.setData("text/plain", index.toString());
-  };
-
-  const handleDragOverToken = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDropToken = (e: React.DragEvent, targetIndex: number) => {
-    e.preventDefault();
-    const sourceIndexStr = e.dataTransfer.getData("text/plain");
-    if (!sourceIndexStr) return;
-    const sourceIndex = parseInt(sourceIndexStr, 10);
-    if (isNaN(sourceIndex) || sourceIndex === targetIndex) return;
-
-    setTokenOrder(prev => {
-      const next = [...prev];
-      const [moved] = next.splice(sourceIndex, 1);
-      next.splice(targetIndex, 0, moved);
-      return next;
-    });
-    setCustomOrderActive(true);
-  };
-
-  const moveTokenIndex = (index: number, direction: "left" | "right") => {
-    const targetIndex = direction === "left" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= tokenOrder.length) return;
-
-    setTokenOrder(prev => {
-      const next = [...prev];
-      const temp = next[index];
-      next[index] = next[targetIndex];
-      next[targetIndex] = temp;
-      return next;
-    });
-    setCustomOrderActive(true);
-  };
-
-  const getFieldKeyOfToken = (tok: string): string => {
-    const foundField = [...specificFields, ...UNIVERSAL].find(f => {
-      const v = sel[f.key];
-      if (!v) return false;
-      if (Array.isArray(v)) return v.includes(tok);
-      return v === tok;
-    });
-    return foundField ? foundField.key : "";
-  };
-
   const pickGenre = (g: string) => {
     if (genre === g) {
       setGenre(null);
@@ -2069,36 +1883,10 @@ export default function App() {
     return out;
   }, [sel, specificFields]);
 
-  // Sync tokenOrder with activeTokens while preserving manual custom ordering
-  useEffect(() => {
-    setTokenOrder(prev => {
-      const kept = prev.filter(t => activeTokens.includes(t));
-      const added = activeTokens.filter(t => !kept.includes(t));
-      return [...kept, ...added];
-    });
-  }, [activeTokens]);
-
   // Real-time local compiled prose preview (before API call!)
   const liveProseText = useMemo(() => {
-    if (customOrderActive && tokenOrder.length > 0) {
-      const subjectText = subject.trim() || "(Describe your subject above)";
-      let prefix = "";
-      if (technique === "Photography") {
-        prefix = `An atmospheric photograph depicting ${subjectText}`;
-      } else if (technique === "Illustration") {
-        prefix = `A beautiful illustration depicting ${subjectText}`;
-      } else if (technique === "3D") {
-        prefix = `A masterfully modeled 3D render of ${subjectText}`;
-      } else {
-        prefix = `A beautiful custom multimedia piece depicting ${subjectText}`;
-      }
-      if (genre) {
-        prefix += `, in a highly authentic and atmospheric ${genre} setting`;
-      }
-      return `${prefix}, characterized by the following prioritized details: ${tokenOrder.join(", ")}.`;
-    }
     return compileProsePrompt(technique, subject, genre, sel);
-  }, [technique, subject, genre, sel, customOrderActive, tokenOrder]);
+  }, [technique, subject, genre, sel]);
 
   // Assemble Raw Prompt (LOCAL ONLY)
   const assembleRawPrompt = () => {
@@ -2288,7 +2076,134 @@ Because "Cinematic Prompt Expansion" is disabled, output a simpler, streamlined,
     }
   };
 
+  // Synchronize custom render prompt with generated prose automatically when it updates
+  useEffect(() => {
+    if (aiProse) {
+      setCustomRenderPrompt(aiProse);
+    } else {
+      setCustomRenderPrompt(liveProseText);
+    }
+  }, [aiProse, liveProseText]);
 
+  // Trigger Image Generation across selected render engines
+  const triggerImageRender = async () => {
+    setIsRendering(true);
+    setRenderError(null);
+    const targetPrompt = customRenderPrompt.trim() || aiProse || liveProseText;
+
+    if (!targetPrompt) {
+      setRenderError("Prompt cannot be empty. Please configure visual parameters or type a subject first.");
+      setIsRendering(false);
+      return;
+    }
+
+    try {
+      if (renderEngine === "flux") {
+        // FLUX Engine: construct Pollinations.ai call
+        const seed = Math.floor(Math.random() * 1000000) + 1;
+        
+        // Map Aspect Ratio to width/height for FLUX
+        let width = 1024;
+        let height = 1024;
+        
+        // Under fluxAspectMode === "crop" (Anti-Distortion), we generate a perfect 1024x1024 square 
+        // and crop it with CSS object-cover inside the target ratio container.
+        // This completely avoids any stretching or squishing distortion!
+        // For fluxAspectMode === "native", we request optimal native dimensions aligned with FLUX's Megapixel aspect training.
+        if (fluxAspectMode === "native") {
+          if (renderAspectRatio === "16:9") {
+            width = 1280;
+            height = 720;
+          } else if (renderAspectRatio === "9:16") {
+            width = 720;
+            height = 1280;
+          } else if (renderAspectRatio === "4:3") {
+            width = 1152;
+            height = 864;
+          } else if (renderAspectRatio === "3:4") {
+            width = 864;
+            height = 1152;
+          }
+        }
+
+        // Sanitize the prompt for safe URL query parsing and to ensure no newlines or double spaces break the generator
+        const sanitizedPrompt = targetPrompt
+          .replace(/[\r\n]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        // Pass the selected high-quality FLUX variant style (standard, realism, anime, 3d) to the pollinations engine
+        const modelParam = `&model=${fluxModelStyle}`;
+        const fluxUrl = `https://image.pollinations.ai/p/${encodeURIComponent(sanitizedPrompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&enhance=false${modelParam}`;
+        
+        // Pre-fetch and cache image load for premium skeleton loader sync
+        await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = fluxUrl;
+          img.referrerPolicy = "no-referrer";
+          img.onload = () => resolve(true);
+          img.onerror = () => reject(new Error("Failed to render image with FLUX. This can sometimes happen if Pollinations.ai is busy. Please try again."));
+        });
+
+        const engineLabel = fluxModelStyle === "flux" 
+          ? "FLUX (Free)" 
+          : fluxModelStyle === "flux-realism" 
+          ? "FLUX Realism" 
+          : fluxModelStyle === "flux-anime" 
+          ? "FLUX Anime" 
+          : "FLUX 3D (Clay)";
+
+        const newRender = {
+          id: String(Date.now()),
+          url: fluxUrl,
+          prompt: targetPrompt,
+          engine: engineLabel,
+          timestamp: new Date().toLocaleTimeString(),
+          aspectRatio: renderAspectRatio,
+          resolution: `${width}x${height}`
+        };
+
+        setRenderedImage(fluxUrl);
+        setRenderHistory(prev => [newRender, ...prev]);
+      } else {
+        // Gemini Image Engines (Gemini Image 3 or Nano Banana Pro)
+        const response = await fetch('/api/generate-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: targetPrompt,
+            modelName: renderEngine,
+            apiKey: userApiKey,
+            aspectRatio: renderAspectRatio,
+            imageSize: renderResolution
+          })
+        });
+
+        const data = await response.json();
+        if (data.status === 'success' && data.imageUrl) {
+          const newRender = {
+            id: String(Date.now()),
+            url: data.imageUrl,
+            prompt: targetPrompt,
+            engine: renderEngine === "gemini-3.1-flash-image" ? "Gemini Image 3" : "Nano Banana Pro",
+            timestamp: new Date().toLocaleTimeString(),
+            aspectRatio: renderAspectRatio,
+            resolution: renderResolution
+          };
+
+          setRenderedImage(data.imageUrl);
+          setRenderHistory(prev => [newRender, ...prev]);
+        } else {
+          throw new Error(data.message || "Failed to generate image using Gemini. If you are on a static server, please configure your own Google AI Studio API Key.");
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+      setRenderError(e.message || "An unexpected error occurred during image compilation.");
+    } finally {
+      setIsRendering(false);
+    }
+  };
 
   // Generate / Invoke AI Storyboard Visualizer
   const generateStoryboard = async () => {
@@ -3434,139 +3349,6 @@ Output direct, vivid paragraphs with no conversational prefaces or postfaces.`;
         </AnimatePresence>
         
         <div className="w-full max-w-7xl mx-auto px-6 py-3 flex flex-col gap-3">
-          {/* =========================================================================
-              PRIORITY & COLLISION DECK (Active selected parameters & real-time reordering)
-             ========================================================================= */}
-          {activeTokens.length > 0 && (
-            <div className="bg-zinc-950/60 border border-white/[0.04] p-2.5 rounded-xl flex flex-col gap-2">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-300 font-bold">
-                    Rigging Priority Deck ({activeTokens.length} active parameters)
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  {/* Order Mode Toggle */}
-                  <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider">Compiler Order Mode:</span>
-                  <div className="inline-flex rounded-lg p-0.5 bg-black border border-white/[0.06] select-none">
-                    <button
-                      type="button"
-                      onClick={() => setCustomOrderActive(false)}
-                      className={`px-2 py-0.5 rounded-md text-[9px] font-mono uppercase font-bold tracking-wider transition-colors ${
-                        !customOrderActive 
-                          ? "bg-amber-400/10 border border-amber-500/20 text-amber-400" 
-                          : "text-zinc-500 hover:text-zinc-300"
-                      }`}
-                    >
-                      Autoflow Prose
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCustomOrderActive(true)}
-                      className={`px-2 py-0.5 rounded-md text-[9px] font-mono uppercase font-bold tracking-wider transition-colors ${
-                        customOrderActive 
-                          ? "bg-amber-400/10 border border-amber-500/20 text-amber-400" 
-                          : "text-zinc-500 hover:text-zinc-300"
-                      }`}
-                    >
-                      Custom Priority
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Horizontal Scroll Deck */}
-              <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-zinc-800">
-                {tokenOrder.map((tok, idx) => {
-                  const fKey = getFieldKeyOfToken(tok);
-                  const catColor = getCategoryColor(fKey);
-                  let badgeColor = "border-zinc-800 text-zinc-400 bg-zinc-950/50";
-                  if (catColor === "teal") badgeColor = "border-teal-500/30 text-teal-350 bg-teal-950/20";
-                  else if (catColor === "amber") badgeColor = "border-amber-500/30 text-amber-350 bg-amber-950/20";
-                  else if (catColor === "indigo") badgeColor = "border-indigo-500/30 text-indigo-350 bg-indigo-950/20";
-                  else if (catColor === "emerald") badgeColor = "border-emerald-500/30 text-emerald-350 bg-emerald-950/20";
-                  else if (catColor === "rose") badgeColor = "border-rose-500/30 text-rose-350 bg-rose-950/20";
-                  else if (catColor === "fuchsia") badgeColor = "border-fuchsia-500/30 text-fuchsia-350 bg-fuchsia-950/20";
-
-                  // Check if this token is involved in any active conflicts
-                  const isConflicting = detectTagConflicts(activeTokens).some(conf => conf.tagA === tok || conf.tagB === tok);
-                  const highlightBorder = isConflicting 
-                    ? "border-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.2)] animate-pulse" 
-                    : "";
-
-                  return (
-                    <div
-                      key={tok}
-                      draggable
-                      onDragStart={(e) => handleDragStartToken(e, idx)}
-                      onDragOver={handleDragOverToken}
-                      onDrop={(e) => handleDropToken(e, idx)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-mono transition-all duration-150 cursor-grab active:cursor-grabbing shrink-0 select-none ${badgeColor} ${highlightBorder} group`}
-                    >
-                      <GripVertical size={10} className="text-zinc-600 group-hover:text-zinc-400 cursor-grab shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[7.5px] uppercase tracking-wider text-zinc-500 font-bold block leading-none">{fKey || "Parameter"}</span>
-                        <span className="font-extrabold text-zinc-200 mt-0.5">{tok}</span>
-                      </div>
-
-                      {/* Manual arrow controls (especially for touch/mobile devices!) */}
-                      <div className="flex items-center gap-0.5 ml-2 border-l border-white/[0.06] pl-1.5 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => moveTokenIndex(idx, "left")}
-                          className="p-0.5 hover:bg-white/[0.08] text-zinc-400 hover:text-white rounded disabled:opacity-20 disabled:hover:bg-transparent"
-                          title="Move priority left"
-                        >
-                          ◀
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === tokenOrder.length - 1}
-                          onClick={() => moveTokenIndex(idx, "right")}
-                          className="p-0.5 hover:bg-white/[0.08] text-zinc-400 hover:text-white rounded disabled:opacity-20 disabled:hover:bg-transparent"
-                          title="Move priority right"
-                        >
-                          ▶
-                        </button>
-                      </div>
-
-                      {/* Deselect / Remove Close Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleDeselectToken(tok)}
-                        className="p-0.5 hover:bg-red-500/20 text-zinc-500 hover:text-red-400 rounded transition-colors ml-1"
-                        title="Remove token"
-                      >
-                        <X size={10} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Real-time Tag Collisions & Conflict Detection Alerts */}
-              {detectTagConflicts(activeTokens).length > 0 && (
-                <div className="mt-1 bg-amber-500/5 border border-amber-500/25 rounded-lg p-2.5 flex flex-col gap-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <AlertTriangle size={11} className="text-amber-500 animate-pulse shrink-0" />
-                    <span className="text-[10px] font-mono font-black uppercase text-amber-400 tracking-wider">
-                      Tag Collisions Detected ({detectTagConflicts(activeTokens).length})
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    {detectTagConflicts(activeTokens).map((conf, i) => (
-                      <div key={i} className="text-[9.5px] font-mono text-zinc-300 leading-tight">
-                        ⚡ <strong className="text-amber-300 font-bold">&quot;{conf.tagA}&quot;</strong> conflicts with <strong className="text-amber-300 font-bold">&quot;{conf.tagB}&quot;</strong> &rarr; <span className="text-zinc-400 italic">{conf.reason}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* COMPACT HUD LINE (Minimal Height Profile) */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             
@@ -3689,6 +3471,23 @@ Output direct, vivid paragraphs with no conversational prefaces or postfaces.`;
                 <span className="text-[9.5px] font-mono uppercase font-bold">
                   {userApiKey ? "Key Active" : "Add Key"}
                 </span>
+              </button>
+
+              {/* Render Studio Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowRenderStudio(!showRenderStudio)}
+                onMouseEnter={() => handleHoverToken("Render Studio", "Toggles the high-fidelity imagery generation suite to compile beautiful visuals matching your prompt parameters.")}
+                onMouseLeave={() => handleHoverToken("Render Studio", null)}
+                title="Toggle the dedicated image generation studio render suite."
+                className={`px-3 py-2 text-[10.5px] font-mono uppercase tracking-wider rounded-lg font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                  showRenderStudio
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                    : "bg-zinc-950 hover:bg-zinc-900 border-white/[0.08] text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <Camera size={11} className={showRenderStudio ? "text-emerald-400" : "text-zinc-400"} />
+                <span>{showRenderStudio ? "HIDE STUDIO" : "RENDER STUDIO"}</span>
               </button>
 
               {/* Visualize Button */}
@@ -3995,9 +3794,528 @@ Output direct, vivid paragraphs with no conversational prefaces or postfaces.`;
                           )}
                         </div>
                       )}
-                                     </div>
+                      
+                    </div>
                   </div>
                 </div>
+
+                {/* DEDICATED STUDIO RENDER ENGINE SECTION */}
+                {showRenderStudio && (
+                <div className="border-t border-white/[0.04] mt-5 pt-4">
+                  <div className="flex items-center justify-between border-b border-white/[0.05] pb-2.5 mb-3 select-none">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <h3 className="text-[11px] font-mono uppercase tracking-[0.15em] text-zinc-100 font-extrabold flex items-center gap-1.5">
+                        <Sparkles size={12} className="text-emerald-400" />
+                        Dedicated Studio Render Suite
+                      </h3>
+                      <span className="text-[8px] font-mono text-zinc-500 px-1.5 py-0.5 rounded bg-zinc-900 border border-white/[0.03]">v7 PIPELINE</span>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 font-mono">
+                      {isRendering ? (
+                        <span className="text-emerald-400 animate-pulse font-bold">● PROCESSING DISPATCH...</span>
+                      ) : (
+                        <span className="text-zinc-500">READY</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                    {/* Left Panel: Settings & Prompt (col-span-4) */}
+                    <div className="lg:col-span-4 flex flex-col justify-between space-y-4 bg-zinc-950/40 border border-white/[0.03] p-3.5 rounded-xl">
+                      <div className="space-y-4">
+                        {/* 1. Model Selection */}
+                        <div className="space-y-1.5">
+                          <span className="text-[9px] text-zinc-500 uppercase tracking-wider block font-bold">1. SELECT RENDER ENGINE</span>
+                          <div className="flex flex-col gap-1.5">
+                            {/* FLUX */}
+                            <button
+                              type="button"
+                              onClick={() => setRenderEngine("flux")}
+                              className={`w-full p-2.5 text-left rounded-lg border transition-all cursor-pointer ${
+                                renderEngine === "flux"
+                                  ? "bg-emerald-950/30 border-emerald-500/40 text-white"
+                                  : "bg-black/30 border-white/[0.04] text-zinc-400 hover:bg-black/50 hover:text-zinc-200"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold">FLUX.1 Schnell</span>
+                                <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1 py-0.5 rounded uppercase font-bold">Free / Instant</span>
+                              </div>
+                              <p className="text-[8.5px] text-zinc-500 leading-tight mt-0.5">Fast, open-source high fidelity model. No keys required.</p>
+                            </button>
+
+                            {/* Gemini Image 3 */}
+                            <button
+                              type="button"
+                              onClick={() => setRenderEngine("gemini-3.1-flash-image")}
+                              className={`w-full p-2.5 text-left rounded-lg border transition-all cursor-pointer ${
+                                renderEngine === "gemini-3.1-flash-image"
+                                  ? "bg-emerald-950/30 border-emerald-500/40 text-white"
+                                  : "bg-black/30 border-white/[0.04] text-zinc-400 hover:bg-black/50 hover:text-zinc-200"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold">Gemini Image 3</span>
+                                <span className="text-[8px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1 py-0.5 rounded uppercase font-extrabold">Paid Model</span>
+                              </div>
+                              <p className="text-[8.5px] text-zinc-500 leading-tight mt-0.5">Google Imagen 3 core engine. Perfect layout compliance. Requires personal API Key.</p>
+                            </button>
+
+                            {/* Nano Banana Pro */}
+                            <button
+                              type="button"
+                              onClick={() => setRenderEngine("gemini-3-pro-image")}
+                              className={`w-full p-2.5 text-left rounded-lg border transition-all cursor-pointer ${
+                                renderEngine === "gemini-3-pro-image"
+                                  ? "bg-emerald-950/30 border-emerald-500/40 text-white"
+                                  : "bg-black/30 border-white/[0.04] text-zinc-400 hover:bg-black/50 hover:text-zinc-200"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold">Nano Banana Pro</span>
+                                <span className="text-[8px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1 py-0.5 rounded uppercase font-extrabold">Paid / HD</span>
+                              </div>
+                              <p className="text-[8.5px] text-zinc-500 leading-tight mt-0.5">Ultra high resolution visual fidelity & premium outputs. Requires personal API Key.</p>
+                            </button>
+
+                            {/* FLUX Model Style Variant Select (Only if FLUX is active) */}
+                            {renderEngine === "flux" && (
+                              <div className="space-y-1.5 mt-2 bg-black/40 border border-white/[0.04] p-2.5 rounded-lg">
+                                <span className="text-[9px] text-zinc-400 uppercase tracking-wider block font-bold">FLUX Style Variant</span>
+                                <div className="grid grid-cols-2 gap-1.5">
+                                  {(["flux", "flux-realism", "flux-anime", "flux-3d"] as const).map(variant => {
+                                    const labels = {
+                                      "flux": "Standard Schnell",
+                                      "flux-realism": "Photorealism",
+                                      "flux-anime": "Cel Anime",
+                                      "flux-3d": "3D Clay"
+                                    };
+                                    return (
+                                      <button
+                                        key={variant}
+                                        type="button"
+                                        onClick={() => setFluxModelStyle(variant)}
+                                        className={`py-1.5 px-2 rounded border text-[9.5px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
+                                          fluxModelStyle === variant
+                                            ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-400"
+                                            : "bg-black/30 border-white/[0.04] text-zinc-500 hover:text-zinc-300"
+                                        }`}
+                                      >
+                                        <span>{labels[variant]}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 2. Aspect Ratio */}
+                        <div className="space-y-1.5">
+                          <span className="text-[9px] text-zinc-500 uppercase tracking-wider block font-bold">2. CHOOSE ASPECT RATIO</span>
+                          <div className="grid grid-cols-5 gap-1 text-center">
+                            {(["1:1", "16:9", "9:16", "4:3", "3:4"] as const).map(ratio => (
+                              <button
+                                key={ratio}
+                                type="button"
+                                onClick={() => setRenderAspectRatio(ratio)}
+                                className={`p-1.5 rounded-md border text-[9px] transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
+                                  renderAspectRatio === ratio
+                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                                    : "bg-black/30 border-white/[0.04] text-zinc-500 hover:text-zinc-300"
+                                }`}
+                              >
+                                <div className={`border border-current rounded shrink-0 ${
+                                  ratio === "1:1" ? "w-3 h-3" :
+                                  ratio === "16:9" ? "w-4.5 h-2.5" :
+                                  ratio === "9:16" ? "w-2.5 h-4.5" :
+                                  ratio === "4:3" ? "w-4 h-3" :
+                                  "w-3 h-4"
+                                }`} />
+                                <span className="font-bold">{ratio}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 2.5. Aspect Scaling Mode (Only for FLUX when non-square) */}
+                        {renderEngine === "flux" && renderAspectRatio !== "1:1" && (
+                          <div className="space-y-1.5 bg-black/40 border border-white/[0.04] p-2.5 rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9px] text-zinc-400 uppercase tracking-wider block font-bold">Anti-Distortion Engine</span>
+                              <span className="text-[7.5px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 px-1 rounded font-mono font-bold animate-pulse">ACTIVE</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFluxAspectMode("crop");
+                                  setImageScaleMode("cover");
+                                }}
+                                className={`py-1.5 px-2 rounded border text-[9.5px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
+                                  fluxAspectMode === "crop"
+                                    ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-400"
+                                    : "bg-black/30 border-white/[0.04] text-zinc-500 hover:text-zinc-300"
+                                }`}
+                              >
+                                <span>Smart Crop</span>
+                                <span className="text-[7px] text-zinc-500 font-normal mt-0.5 text-center">100% Proportional (No Stretch)</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFluxAspectMode("native");
+                                  setImageScaleMode("contain");
+                                }}
+                                className={`py-1.5 px-2 rounded border text-[9.5px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
+                                  fluxAspectMode === "native"
+                                    ? "bg-amber-500/10 border-amber-500/40 text-amber-400"
+                                    : "bg-black/30 border-white/[0.04] text-zinc-500 hover:text-zinc-300"
+                                }`}
+                              >
+                                <span>Native Size</span>
+                                <span className="text-[7px] text-zinc-500 font-normal mt-0.5 text-center">May stretch or squish</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 3. Resolution (Gemini only) */}
+                        {renderEngine !== "flux" && (
+                          <div className="space-y-1.5">
+                            <span className="text-[9px] text-zinc-500 uppercase tracking-wider block font-bold">3. CHOOSE RESOLUTION</span>
+                            <div className="grid grid-cols-4 gap-1 text-center">
+                              {(["512px", "1K", "2K", "4K"] as const).map(res => (
+                                <button
+                                  key={res}
+                                  type="button"
+                                  onClick={() => setRenderResolution(res)}
+                                  className={`py-1 rounded border text-[9px] font-bold transition-all cursor-pointer ${
+                                    renderResolution === res
+                                      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                                      : "bg-black/30 border-white/[0.04] text-zinc-500 hover:text-zinc-300"
+                                  }`}
+                                >
+                                  {res}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info footnote */}
+                      <div className="text-[8px] text-zinc-500 leading-normal border-t border-white/[0.03] pt-2.5">
+                        {renderEngine === "flux" && (
+                          <span>⚡ Using free instant Pollinations.ai FLUX engine (with custom {fluxModelStyle} latent style mappings). Exact prompt matching.</span>
+                        )}
+                        {renderEngine === "gemini-3.1-flash-image" && (
+                          <span className="text-amber-400">⚡ Google Imagen 3 requires your personal Google AI Studio API key in settings/toolbar for direct browser execution.</span>
+                        )}
+                        {renderEngine === "gemini-3-pro-image" && (
+                          <span className="text-amber-400">🔑 Nano Banana Pro requires your personal Google AI Studio API key in settings/toolbar for direct browser execution.</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Middle Panel: Visual Canvas Stage (col-span-5) */}
+                    <div className="lg:col-span-5 flex flex-col justify-between space-y-3 bg-zinc-950 border border-white/[0.05] p-3.5 rounded-xl shadow-inner min-h-[420px]">
+                      {/* Active Visual Box */}
+                      <div className="flex-1 flex flex-col items-center justify-center bg-black/60 border border-white/[0.03] rounded-lg p-2.5 relative min-h-[280px]">
+                        {renderedImage ? (
+                          <div className="w-full flex flex-col items-center animate-fadeIn">
+                            <div className={`w-full flex items-center justify-center relative overflow-hidden rounded border border-white/[0.05] bg-zinc-900/40 
+                              ${renderAspectRatio === "16:9" ? "aspect-video" : 
+                                renderAspectRatio === "9:16" ? "aspect-[9/16] max-h-[290px]" : 
+                                renderAspectRatio === "4:3" ? "aspect-[4/3] max-h-[290px]" : 
+                                renderAspectRatio === "3:4" ? "aspect-[3/4] max-h-[290px]" : 
+                                "aspect-square max-h-[290px]"}`}
+                            >
+                              <img 
+                                src={renderedImage} 
+                                alt="Generated render" 
+                                className={`${
+                                  imageScaleMode === "cover" 
+                                    ? "object-cover w-full h-full" 
+                                    : "object-contain w-full h-full max-h-full"
+                                }`}
+                                referrerPolicy="no-referrer"
+                              />
+                              <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity bg-black/80 p-1.5 rounded-md border border-white/10 shadow-lg items-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setImageScaleMode(prev => prev === "cover" ? "contain" : "cover")}
+                                  className={`p-1 transition-colors cursor-pointer rounded hover:bg-white/5 ${
+                                    imageScaleMode === "cover" ? "text-emerald-400 hover:text-emerald-300" : "text-zinc-400 hover:text-zinc-200"
+                                  }`}
+                                  title={imageScaleMode === "cover" ? "Switch to Fit (with black bars)" : "Switch to Fill/Crop (Anti-Stretch)"}
+                                >
+                                  {imageScaleMode === "cover" ? <Crop size={14} /> : <Minimize2 size={14} />}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => downloadImage(renderedImage, `lens-and-light-render-${Date.now()}.png`)}
+                                  className="p-1 hover:text-emerald-400 text-zinc-300 transition-colors cursor-pointer rounded hover:bg-white/5"
+                                  title="Download Image"
+                                >
+                                  <Download size={14} />
+                                </button>
+                                <a
+                                  href={renderedImage}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="p-1 hover:text-blue-400 text-zinc-300 transition-colors cursor-pointer rounded hover:bg-white/5"
+                                  title="Open in new tab"
+                                >
+                                  <Maximize2 size={14} />
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        ) : isRendering ? (
+                          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center space-y-4 animate-fadeIn">
+                            <div className="relative w-16 h-16 flex items-center justify-center">
+                              <div className="absolute inset-0 border-4 border-emerald-500/10 rounded-full" />
+                              <div className="absolute inset-0 border-4 border-t-emerald-500 rounded-full animate-spin" />
+                              <Sparkles className="text-emerald-400 animate-pulse" size={20} />
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="text-xs font-bold text-zinc-200 uppercase tracking-widest">Generating Imagery...</h4>
+                              <p className="text-[10px] text-emerald-400 font-mono animate-pulse">
+                                {renderEngine === "flux" 
+                                  ? "Resolving FLUX direct latents (enhance=false)..." 
+                                  : renderEngine === "gemini-3.1-flash-image" 
+                                  ? "Dispatching Imagen 3 on host API client..." 
+                                  : "Processing with Nano Banana Pro cinematic resolution..."}
+                              </p>
+                              <p className="text-[9px] text-zinc-500 italic max-w-[240px] leading-relaxed mx-auto">
+                                Resolving focal metrics, lighting values, and sensor characteristics.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-zinc-500 space-y-3">
+                            <div className="p-3 bg-zinc-900 border border-white/[0.04] rounded-full text-zinc-400">
+                              <ImageIcon size={22} />
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="text-xs font-semibold text-zinc-300">Canvas Is Empty</h4>
+                              <p className="text-[10px] text-zinc-500 max-w-[240px] leading-relaxed mx-auto">
+                                Click <strong className="text-emerald-400">COMPILE IMAGERY</strong> below to generate a beautiful render matching your parameters.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Input controls and compile button */}
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center justify-between text-[9px] text-zinc-500">
+                          <span className="font-bold uppercase tracking-wider">ACTIVE COMPILED PROMPT</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (aiProse) setCustomRenderPrompt(aiProse);
+                              else setCustomRenderPrompt(liveProseText);
+                            }}
+                            className="text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer font-bold animate-pulse"
+                          >
+                            <RefreshCw size={9} /> Sync Slider Prompt
+                          </button>
+                        </div>
+                        <textarea
+                          value={customRenderPrompt}
+                          onChange={(e) => setCustomRenderPrompt(e.target.value)}
+                          rows={2}
+                          className="w-full bg-black/50 border border-white/[0.06] rounded-lg p-2 text-[10px] font-mono text-zinc-200 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 leading-relaxed select-text"
+                          placeholder="Active prompt goes here..."
+                        />
+
+                        {/* Error Warning */}
+                        {renderError && (
+                          <div className="p-2 bg-red-950/30 border border-red-500/30 text-red-400 rounded text-[9.5px] leading-relaxed flex items-start gap-2">
+                            <AlertTriangle className="shrink-0 text-red-500 mt-0.5" size={12} />
+                            <span><strong>RENDER ERROR:</strong> {renderError}</span>
+                          </div>
+                        )}
+
+                        {/* Key alert notice */}
+                        {(renderEngine === "gemini-3-pro-image" || renderEngine === "gemini-3.1-flash-image") && !userApiKey && (
+                          <div className="p-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded text-[9.5px] leading-relaxed flex items-start gap-2 select-text animate-pulse">
+                            <AlertTriangle className="shrink-0 text-amber-500 mt-0.5" size={12} />
+                            <div>
+                              <strong>API Key Configuration Required:</strong> Paid Google Image models require a personal Gemini API Key. Click <span className="underline font-bold cursor-pointer hover:text-amber-300" onClick={() => setShowApiKeyModal(true)}>Add Key</span> in the toolbar or configure in settings.
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Large Compile Button */}
+                        <button
+                          type="button"
+                          onClick={triggerImageRender}
+                          disabled={isRendering || ((renderEngine === "gemini-3-pro-image" || renderEngine === "gemini-3.1-flash-image") && !userApiKey)}
+                          className={`w-full py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                            isRendering 
+                              ? "bg-zinc-800 text-zinc-500 border border-white/5 cursor-not-allowed" 
+                              : (renderEngine === "gemini-3-pro-image" || renderEngine === "gemini-3.1-flash-image") && !userApiKey
+                              ? "bg-zinc-900 text-zinc-600 border border-white/5 cursor-not-allowed"
+                              : "bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-98"
+                          }`}
+                        >
+                          {isRendering ? (
+                            <>
+                              <RefreshCw size={13} className="animate-spin" />
+                              <span>RENDERING VISUALS...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Cpu size={13} />
+                              <span>COMPILE IMAGERY ({renderEngine === "flux" ? "FREE FLUX" : renderEngine === "gemini-3.1-flash-image" ? "PAID IMAGEN 3" : "PAID PRO IMAGE"})</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* Alternative Free Playgrounds Sandbox */}
+                        <div className="bg-zinc-900/30 border border-white/[0.04] p-2.5 rounded-lg space-y-1.5 mt-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                              <ExternalLink size={10} className="text-amber-400" />
+                              Alternative Free Playgrounds (Zero Distortion)
+                            </span>
+                            <span className="text-[7.5px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1 rounded uppercase font-bold">100% Free</span>
+                          </div>
+                          <p className="text-[8px] text-zinc-500 leading-normal">
+                            Generate using free, high-performance external sandboxes. Clicking a button below automatically copies your active compiled prompt to your clipboard and opens the playground in a new tab!
+                          </p>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const activePrompt = customRenderPrompt.trim() || aiProse || liveProseText;
+                                navigator.clipboard.writeText(activePrompt);
+                                setCopySuccessToast("Prompt copied to clipboard! Opening ComfyUI Sandbox...");
+                                setTimeout(() => setCopySuccessToast(null), 3000);
+                                window.open("https://comfyai.run/", "_blank");
+                              }}
+                              className="py-1 px-1.5 rounded bg-zinc-950 hover:bg-zinc-900 border border-white/[0.05] text-[9px] font-mono text-zinc-300 hover:text-amber-400 transition-all cursor-pointer flex items-center justify-center gap-1"
+                              title="Copy prompt and open ComfyUI online sandbox"
+                            >
+                              <Cpu size={10} /> ComfyUI Online
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const activePrompt = customRenderPrompt.trim() || aiProse || liveProseText;
+                                navigator.clipboard.writeText(activePrompt);
+                                setCopySuccessToast("Prompt copied to clipboard! Opening HF Flux Playground...");
+                                setTimeout(() => setCopySuccessToast(null), 3000);
+                                window.open("https://huggingface.co/spaces/black-forest-labs/FLUX.1-schnell", "_blank");
+                              }}
+                              className="py-1 px-1.5 rounded bg-zinc-950 hover:bg-zinc-900 border border-white/[0.05] text-[9px] font-mono text-zinc-300 hover:text-emerald-400 transition-all cursor-pointer flex items-center justify-center gap-1"
+                              title="Copy prompt and open Hugging Face FLUX.1 Schnell playground"
+                            >
+                              <Sparkles size={10} /> HF Flux Schnell
+                            </button>
+                          </div>
+                          {copySuccessToast && (
+                            <div className="text-[8px] font-mono text-center text-emerald-400 bg-emerald-950/20 py-0.5 rounded border border-emerald-500/15 animate-fadeIn">
+                              {copySuccessToast}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Panel: Render Gallery History (col-span-3) */}
+                    <div className="lg:col-span-3 flex flex-col justify-between bg-zinc-950/40 border border-white/[0.03] p-3.5 rounded-xl h-full min-h-[420px]">
+                      <div className="space-y-3 h-full flex flex-col">
+                        <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                          <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">SESSION RENDER TIMELINE</span>
+                          {renderHistory.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setRenderHistory([]);
+                                setRenderedImage(null);
+                              }}
+                              className="text-[8.5px] text-red-400 hover:underline flex items-center gap-0.5 cursor-pointer font-bold"
+                            >
+                              <Trash2 size={10} /> Clear
+                            </button>
+                          )}
+                        </div>
+
+                        {renderHistory.length > 0 ? (
+                          <div className="flex-1 overflow-y-auto max-h-[340px] pr-1 space-y-2 scrollbar-thin scrollbar-thumb-zinc-800">
+                            {renderHistory.map((item) => (
+                              <div 
+                                key={item.id}
+                                className={`group relative rounded-lg border bg-zinc-900/60 p-2 cursor-pointer transition-all duration-200 select-text flex items-center gap-2.5
+                                  ${renderedImage === item.url ? "border-emerald-500/50 bg-emerald-950/10" : "border-white/[0.04] hover:border-zinc-700 hover:bg-zinc-900"}`}
+                                onClick={() => setRenderedImage(item.url)}
+                              >
+                                <div className="w-12 h-12 rounded overflow-hidden bg-black shrink-0 relative border border-white/5">
+                                  <img 
+                                    src={item.url} 
+                                    alt="History preview" 
+                                    className="object-cover w-full h-full"
+                                    referrerPolicy="no-referrer"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-[9px] text-zinc-300 font-extrabold truncate">{item.engine}</span>
+                                    <span className="text-[8px] text-zinc-500 font-mono">{item.timestamp}</span>
+                                  </div>
+                                  <p className="text-[8.5px] text-zinc-400 truncate leading-relaxed mt-0.5">"{item.prompt}"</p>
+                                  <div className="flex items-center justify-between text-[8px] text-zinc-500 font-mono mt-1">
+                                    <span>{item.aspectRatio} • {item.resolution}</span>
+                                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          downloadImage(item.url, `lens-render-${item.id}.png`);
+                                        }}
+                                        className="hover:text-emerald-400 text-zinc-400 transition-colors p-0.5 cursor-pointer"
+                                        title="Download"
+                                      >
+                                        <Download size={11} />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setRenderHistory(prev => prev.filter(h => h.id !== item.id));
+                                          if (renderedImage === item.url) {
+                                            setRenderedImage(null);
+                                          }
+                                        }}
+                                        className="hover:text-red-400 text-zinc-400 transition-colors p-0.5 cursor-pointer"
+                                        title="Delete"
+                                      >
+                                        <Trash2 size={11} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex-1 flex flex-col items-center justify-center text-center text-zinc-600 p-4">
+                            <ImageIcon size={18} className="text-zinc-700 mb-1.5 animate-pulse" />
+                            <p className="text-[9.5px]">No images generated yet.</p>
+                            <p className="text-[8px] text-zinc-500 mt-0.5 max-w-[130px] leading-relaxed mx-auto">Your visual render history will appear here.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
